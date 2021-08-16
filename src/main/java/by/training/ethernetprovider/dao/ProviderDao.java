@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProviderDao<T extends ProviderEntity> {
+
     Optional<T> getById(int id) throws DaoException;
 
     List<T> getAll() throws DaoException;

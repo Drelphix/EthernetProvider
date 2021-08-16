@@ -5,11 +5,10 @@ import by.training.ethernetprovider.dao.UserDao;
 import by.training.ethernetprovider.entity.Role;
 import by.training.ethernetprovider.entity.Status;
 import by.training.ethernetprovider.entity.User;
-import static by.training.ethernetprovider.dao.impl.ColumnName.*;
-
 import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.intellij.lang.annotations.Language;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -19,29 +18,57 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static by.training.ethernetprovider.dao.impl.ColumnName.*;
+
 public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
     private static final Logger LOGGER = LogManager.getLogger();
-    private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    @Language("SQL")
     private static final String SELECT_USER_BY_ID = "SELECT id_user, name, surname, city, address, login, email, " +
             "balance, roles.role, statuses.status FROM provider.users " +
             "RIGHT JOIN roles ON users.id_role = roles.id_role " +
             "JOIN statuses ON users.id_status = statuses.id_status WHERE id_user = ?";
+    @Language("SQL")
     private static final String SELECT_ALL_USERS = "SELECT id_user, name, surname, city, address, login, email, " +
             "balance, roles.role, statuses.status FROM provider.users " +
             "RIGHT JOIN roles ON users.id_role = roles.id_role " +
             "JOIN statuses ON users.id_status = statuses.id_status;";
+    @Language("SQL")
+    private static final String INSERT_NEW_USER = "INSERT INTO users (name, surname, city, address, login, " +
+            "email, id_role, id_status,  balance, id_user) VALUES ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+    private static final String SELECT_ID_ROLE_BY_NAME = "SELECT id_role FROM roles WHERE role = ?";
+    @Language("SQL")
+    private static final String SELECT_ID_STATUS_BY_NAME = "SELECT id_status FROM statuses WHERE status = ?";
+    @Language("SQL")
+    private static final String UPDATE_USER_BY_USER = "UPDATE users SET name = ?, surname = ?, city = ?, address = ?," +
+            "login = ?, email = ?, id_role = ?, id_status = ? WHERE id_user = ?";
+    @Language("SQL")
+    private static final String UPDATE_PASSWORD_BY_USERNAME = "UPDATE users SET password = ? WHERE login = ?";
+    @Language("SQL")
+    private static final String SELECT_USER_BY_NAME = "SELECT user_id, name, surname, city, address, login, email, " +
+            "balance, roles.role, statuses.status FROM provider.users "+
+            "RIGHT JOIN roles ON users.id_role = roles.id_role WHERE name = ?"+
+            "JOIN statuses ON users.id_status = statuses.id_status;";
+    @Language("SQL")
+    private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id_user = ?";
+    @Language("SQL")
+    private static final String INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL = "INSERT INTO users (name, password, email, role_id, status_id) VALUES ?, ?, ?, ?, ?";
+    @Language("SQL")
+    private static final String UPDATE_USER_STATUS_BY_EMAIL = "UPDATE users SET id_status = ? WHERE email = ?";
+    private final ConnectionPool connectionPool = ConnectionPool.getInstance();
+
+
     @Override
     public Optional<User> getById(int id) throws DaoException {
         User user = null;
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_USER_BY_ID)){
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_USER_BY_ID)) {
             statement.setInt(1, id);
             ResultSet result = statement.executeQuery();
-            if(result.next()){
+            if (result.next()) {
                 user = getUser(result);
             }
-        } catch (SQLException e){
-            LOGGER.error("Can't find user by id: " + id, e);
-            throw new DaoException("Can't find user by id: "+id, e);
+        } catch (SQLException e) {
+            LOGGER.error(String.format("Can't find user by id: %1$s.",id), e);
+            throw new DaoException("Can't find user by id: " + id, e);
         }
         return Optional.ofNullable(user);
     }
@@ -49,41 +76,109 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
     @Override
     public List<User> getAll() throws DaoException {
         List<User> users = new ArrayList<>();
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_USERS)){
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_USERS)) {
             ResultSet result = statement.executeQuery();
-            while (result.next()){
+            while (result.next()) {
                 users.add(getUser(result));
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             LOGGER.error("Can't get all users.", e);
             throw new DaoException("Can't get all users.", e);
         }
-        return null;
+        return users;
     }
 
     @Override
-    public void save(User user) {
-
+    public void save(User user) throws DaoException {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_USER)) {
+            int roleId = getRoleIdByName(user.getRole().getValue());
+            int statusId = getStatusIdByName(user.getStatus().getValue());
+            setUser(statement, user.getName(), user.getSurname(), user.getCity(), user.getAddress(), user.getLogin(), user.getEmail(), roleId, statusId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error(String.format("Can't save user: %1$s", user), e);
+            throw new DaoException("Can't save user: " + user, e);
+        }
     }
 
     @Override
-    public void update(User user) {
-
+    public void update(User user) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(UPDATE_USER_BY_USER)){
+            int roleId = getRoleIdByName(user.getRole().getValue());
+            int statusId = getStatusIdByName(user.getStatus().getValue());
+            setUser(statement, user.getName(), user.getSurname(), user.getCity(), user.getAddress(), user.getLogin(), user.getEmail(), roleId, statusId);
+            statement.setInt(9, user.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            LOGGER.error(String.format("Can't update user: %1$s", user), e);
+            throw  new DaoException("Can't update user: " + user, e);
+        }
     }
 
     @Override
-    public void delete(User user) {
-
+    public void delete(User user) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(DELETE_USER_BY_ID)){
+            statement.setInt(1, user.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            LOGGER.error(String.format("Can't delete user by id: %1$s", user.getId()), e);
+            throw new DaoException("Can't delete user by id: "+user.getId(), e);
+        }
     }
 
     @Override
-    public boolean registerUser(String username, String password, String email) {
-        return false;
+    public boolean registerUser(String username, String password, String email) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL)){
+            statement.setString(1,username);
+            statement.setString(2, password);
+            statement.setString(3,email);
+            statement.setInt(4, getRoleIdByName(Role.USER.getValue()));
+            statement.setInt(5, getStatusIdByName(Status.INACTIVE.getValue()));
+            return statement.executeUpdate() != 0;
+        } catch (SQLException e){
+            LOGGER.error(String.format("Can't register user: %1$s", username), e);
+            throw new DaoException("Can't register user: "+ username, e);
+        }
     }
 
     @Override
-    public User findUserByName(String username) {
-        return null;
+    public Optional<User> findUserByName(String username) throws DaoException {
+        User user = null;
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_USER_BY_NAME)) {
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                user = getUser(result);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(String.format("Can't find user by name: %1$s", username), e);
+            throw new DaoException("Can't find user by name: " + username, e);
+        }
+        return Optional.ofNullable(user);
+    }
+
+    @Override
+    public boolean updatePasswordByUsername(String username, String password) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(UPDATE_PASSWORD_BY_USERNAME)){
+            statement.setString(1, password);
+            statement.setString(2, username);
+            return statement.executeUpdate() != 0;
+        } catch (SQLException e){
+            LOGGER.error(String.format("Can't update password by username: %1$s", username), e);
+            throw new DaoException("Can't update password by username: " + username, e);
+        }
+    }
+
+    @Override
+    public boolean updateStatusByEmail(String email, Status status) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(UPDATE_USER_STATUS_BY_EMAIL)) {
+            statement.setInt(1, getStatusIdByName(status.getValue()));
+            statement.setString(2, email);
+            return statement.executeUpdate() != 0;
+        } catch (SQLException e){
+            LOGGER.error(String.format("Can't update status by email: %1$s",email), e);
+            throw new DaoException("Can't update status by email: " + email, e);
+        }
     }
 
     private User getUser(ResultSet resultSet) throws DaoException {
@@ -99,25 +194,50 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             Role role = Role.valueOf(resultSet.getString(ROLE_ROLE));
             Status status = Status.valueOf(resultSet.getString(STATUS_STATUS));
             return new User(id, name, surname, city, address, login, email, balance, role, status);
-        } catch (SQLException e){
+        } catch (SQLException e) {
+            LOGGER.error("Can't get user from result set.", e);
             throw new DaoException("Can't get user from result set.", e);
         }
     }
 
     private void setUser(PreparedStatement statement, String name, String surname, String city, String address,
-                         String login, String email, Role role, Status status) throws DaoException {
-        try{
+                         String login, String email, int roleId, int statusId) throws DaoException {
+        try {
             statement.setString(1, name);
             statement.setString(2, surname);
             statement.setString(3, city);
             statement.setString(4, address);
             statement.setString(5, login);
             statement.setString(6, email);
-            statement.setString(7, role.getValue());
-            statement.setString(8, status.getValue());
-        } catch (SQLException e){
-            LOGGER.error("Can't set user to statement.",e);
-            throw new DaoException("Can't set user to statement.",e);
+            statement.setInt(7, roleId);
+            statement.setInt(8, statusId);
+        } catch (SQLException e) {
+            LOGGER.error("Can't set user to statement.", e);
+            throw new DaoException("Can't set user to statement.", e);
+        }
+    }
+
+    private int getRoleIdByName(String name) throws DaoException {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ID_ROLE_BY_NAME)) {
+            statement.setString(1, name);
+            ResultSet result = statement.executeQuery();
+            result.first();
+            return result.getInt(ROLE_ID_ROLE);
+        } catch (SQLException e) {
+            LOGGER.error(String.format("Can't find role by name: %1$s", name), e);
+            throw new DaoException("Can't find role by name: " + name, e);
+        }
+    }
+
+    private int getStatusIdByName(String name) throws DaoException {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ID_STATUS_BY_NAME)) {
+            statement.setString(1, name);
+            ResultSet result = statement.executeQuery();
+            result.first();
+            return result.getInt(STATUS_ID_STATUS);
+        } catch (SQLException e) {
+            LOGGER.error(String.format("Can't find status by name: %1$s", name), e);
+            throw new DaoException("Can't find status by name: " + name, e);
         }
     }
 }

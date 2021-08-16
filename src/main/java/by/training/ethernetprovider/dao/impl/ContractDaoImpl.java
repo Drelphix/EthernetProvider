@@ -4,10 +4,11 @@ import by.training.ethernetprovider.connection.ConnectionPool;
 import by.training.ethernetprovider.dao.ContractDao;
 import by.training.ethernetprovider.entity.Contract;
 import by.training.ethernetprovider.entity.Tariff;
-import by.training.ethernetprovider.entity.User;;
+import by.training.ethernetprovider.entity.User;
 import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.intellij.lang.annotations.Language;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -23,13 +24,18 @@ import static by.training.ethernetprovider.dao.impl.ColumnName.*;
 public class ContractDaoImpl implements ContractDao {
     private static final Logger LOGGER = LogManager.getLogger();
     private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    @Language("SQL")
     private static final String SELECT_CONTRACT_BY_ID = "SELECT id_contract, start_date, end_date, discount, " +
             "is_active, id_tariff, id_user FROM contracts WHERE id=?";
+    @Language("SQL")
     private static final String SELECT_ALL_CONTRACTS = "SELECT id_contract, start_date, end_date, discount, " +
             "is_active, id_tariff, id_user FROM contracts";
+    @Language("SQL")
     private static final String UPDATE_CONTRACT_BY_CONTRACT = "UPDATE contracts SET start_date = ?, end_date = ?, " +
             "discount = ?, is_active = ?, id_tariff = ?, id_user = ? WHERE id = ?";
+    @Language("SQL")
     private static final String DELETE_CONTRACT_BY_ID = "DELETE FROM contracts WHERE id_contract = ?";
+    @Language("SQL")
     private static final String INSERT_NEW_CONTRACT = "INSERT INTO contracts (start_date, end_date, discount, " +
             "is_active, id_tariff, id_user) values ?, ?, ?, ?, ?, ?";
 
@@ -43,7 +49,7 @@ public class ContractDaoImpl implements ContractDao {
                 contract = getContract(result);
             }
         } catch (SQLException e) {
-            LOGGER.error("Can't get contract by id: " + id + '.', e);
+            LOGGER.error(String.format("Can't get contract by id: %1$s .", id), e);
             throw new DaoException("Can't get contract by id: " + id + '.', e);
         }
         return Optional.ofNullable(contract);
@@ -58,6 +64,7 @@ public class ContractDaoImpl implements ContractDao {
                 contracts.add(getContract(result));
             }
         } catch (SQLException e){
+            LOGGER.error("Can't get all contracts.",e);
             throw new DaoException("Can't get all contracts.",e);
         }
         return contracts;
@@ -69,8 +76,9 @@ public class ContractDaoImpl implements ContractDao {
             setContract(statement, contract.getStartDate(), contract.getEndDate(),
                         contract.getDiscount(), contract.isActive(),
                         contract.getTariff().getId(), contract.getUser().getId());
-            statement.executeQuery();
+            statement.executeUpdate();
         } catch (SQLException e) {
+            LOGGER.error(String.format("Can't insert new contract: %1$s .", contract), e);
             throw new DaoException("Can't insert new contract: "+contract+'.', e);
         }
     }
@@ -82,8 +90,9 @@ public class ContractDaoImpl implements ContractDao {
             setContract(statement, contract.getStartDate(),
                         contract.getEndDate(), contract.getDiscount(), contract.isActive(),
                         contract.getTariff().getId(), contract.getUser().getId());
-            statement.executeQuery();
+            statement.executeUpdate();
         } catch (SQLException e){
+            LOGGER.error(String.format("Can't update contract: %1$s.", contract), e);
             throw new DaoException("Can't update contract: " + contract +'.', e);
         }
     }
@@ -93,8 +102,9 @@ public class ContractDaoImpl implements ContractDao {
         int contractId = contract.getId();
         try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(DELETE_CONTRACT_BY_ID)){
             statement.setInt(1, contractId);
-            statement.executeQuery();
+            statement.executeUpdate();
         } catch (SQLException e){
+            LOGGER.error(String.format("Can't delete user by id: %1$s.", contractId), e);
             throw new DaoException("Can't delete user by id: " + contractId + '.', e);
         }
     }
@@ -111,6 +121,7 @@ public class ContractDaoImpl implements ContractDao {
             boolean isActive = result.getBoolean(CONTRACT_IS_ACTIVE);
             return new Contract(contractId, startDate,endDate,discount, new Tariff(tariffId),isActive, new User(userId));
         } catch (SQLException e){
+            LOGGER.error("Can't get contract from result set.",e);
             throw new DaoException("Can't get contract from result set.",e);
         }
     }
@@ -125,6 +136,7 @@ public class ContractDaoImpl implements ContractDao {
                 statement.setInt(5, tariffId);
                 statement.setInt(6, userId);
             } catch (SQLException e){
+                LOGGER.error("Can't set prepared statement with contract", e);
                 throw new DaoException("Can't set prepared statement with contract", e);
             }
     }

@@ -1,11 +1,18 @@
 package by.training.ethernetprovider.dao;
 
+import by.training.ethernetprovider.entity.Status;
 import by.training.ethernetprovider.entity.User;
+import by.training.ethernetprovider.exception.DaoException;
+
+import java.util.Optional;
 
 public interface UserDao extends ProviderDao<User> { //TODO 15.08.2021 15:20 :
 
-    public boolean registerUser(String username, String password, String email);
+    boolean registerUser(String username, String password, String email) throws DaoException;
 
-    public User findUserByName(String username);
+    Optional<User> findUserByName(String username) throws DaoException;
 
+    boolean updatePasswordByUsername(String username, String password) throws DaoException;
+
+    boolean updateStatusByEmail(String email, Status status) throws DaoException;
 }

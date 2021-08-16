@@ -19,14 +19,14 @@ public class ConnectionFactory {
     private static final Properties databaseProperties = new Properties();
     private static ConnectionFactory instance;
 
-    public static ConnectionFactory getInstance() throws DatabaseException {
+    public static ConnectionFactory getInstance() {
         if(instance == null){
             instance = new ConnectionFactory();
         }
         return instance;
     }
 
-    public ConnectionFactory () throws DatabaseException {
+    public ConnectionFactory ()  {
         String driver = null;
         try(InputStream inputStream = ConnectionFactory.class.getClassLoader().getResourceAsStream(RESOURCE)){
             databaseProperties.load(inputStream);
@@ -35,10 +35,10 @@ public class ConnectionFactory {
             URL = databaseProperties.getProperty("url");
         } catch (IOException e){
             LOGGER.fatal("Can't find database properties file at: "+RESOURCE);
-            throw new DatabaseException("Can't find database properties file at: "+RESOURCE, e);
+            throw new RuntimeException("Can't find database properties file at: "+RESOURCE, e);
         } catch (ClassNotFoundException e){
             LOGGER.fatal("Can't load database driver class: " + driver);
-            throw new DatabaseException("Can't load database driver class. ", e);
+            throw new RuntimeException("Can't load database driver class. ", e);
         }
     }
 

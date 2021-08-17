@@ -17,13 +17,12 @@ public class ConnectionFactory {
     private static String URL;
     private static final String RESOURCE = "properties/database.properties";
     private static final Properties databaseProperties = new Properties();
-    private static ConnectionFactory instance;
 
+    private static class ConnectionFactoryHandler{
+        private static final ConnectionFactory instance = new ConnectionFactory();
+    }
     public static ConnectionFactory getInstance() {
-        if(instance == null){
-            instance = new ConnectionFactory();
-        }
-        return instance;
+        return ConnectionFactoryHandler.instance;
     }
 
     public ConnectionFactory ()  {
@@ -34,7 +33,7 @@ public class ConnectionFactory {
             Class.forName(driver);
             URL = databaseProperties.getProperty("url");
         } catch (IOException e){
-            LOGGER.fatal("Can't find database properties file at: "+RESOURCE);
+            LOGGER.fatal("Can't find database properties file at: " + RESOURCE);
             throw new RuntimeException("Can't find database properties file at: "+RESOURCE, e);
         } catch (ClassNotFoundException e){
             LOGGER.fatal("Can't load database driver class: " + driver);
@@ -42,10 +41,9 @@ public class ConnectionFactory {
         }
     }
 
-    public  ProxyConnection getConnection() throws DatabaseException {
+    public Connection getConnection() throws DatabaseException {
         try {
-            Connection connection = DriverManager.getConnection(URL,databaseProperties);
-            return new ProxyConnection(connection);
+            return DriverManager.getConnection(URL,databaseProperties);
         } catch (SQLException e) {
             throw new DatabaseException("Can't get connection. Url: " + URL + ", properties: " + databaseProperties);
         }

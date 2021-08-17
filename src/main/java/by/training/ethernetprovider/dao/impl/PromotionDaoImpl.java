@@ -1,5 +1,6 @@
 package by.training.ethernetprovider.dao.impl;
 
+import by.training.ethernetprovider.dao.ContractDao;
 import by.training.ethernetprovider.dao.PromotionDao;
 import by.training.ethernetprovider.entity.Promotion;
 
@@ -7,6 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class PromotionDaoImpl implements PromotionDao { //TODO 15.08.2021 15:20 :
+
+    private static class PromotionDaoHolder{
+        private static final ContractDaoImpl instance = new ContractDaoImpl();
+    }
+
+    public static ContractDaoImpl getInstance(){
+        return PromotionDaoHolder.instance;
+    }
     @Override
     public Optional<Promotion> getById(int id) {
         return null;

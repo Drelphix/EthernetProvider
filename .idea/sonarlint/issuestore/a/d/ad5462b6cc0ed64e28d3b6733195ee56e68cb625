@@ -1,11 +1,0 @@
-
-
-java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(£¿€É8’öä¥´/
-
-java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(³ÍµÄ8¢öä¥´/
-
-java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Öãë8¢öä¥´/
-H
-java:S1168"+Return an empty collection instead of null.(¥¹ï8ƒŠË´/
-]
-java:S2789"@Methods with an "Optional" return type should never return null.(¥¹ï8ù–ŠË´/

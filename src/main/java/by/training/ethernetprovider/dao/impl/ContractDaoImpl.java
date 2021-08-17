@@ -39,6 +39,14 @@ public class ContractDaoImpl implements ContractDao {
     private static final String INSERT_NEW_CONTRACT = "INSERT INTO contracts (start_date, end_date, discount, " +
             "is_active, id_tariff, id_user) values ?, ?, ?, ?, ?, ?";
 
+    private static class ContractDaoHolder{
+        private static final ContractDaoImpl instance = new ContractDaoImpl();
+    }
+
+    public static ContractDaoImpl getInstance(){
+        return ContractDaoHolder.instance;
+    }
+
     @Override
     public Optional<Contract> getById(int id) throws DaoException {
         Contract contract = null;
@@ -49,11 +57,13 @@ public class ContractDaoImpl implements ContractDao {
                 contract = getContract(result);
             }
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't get contract by id: %1$s .", id), e);
+            LOGGER.error("Can't get contract by id: {} ", id, e);
             throw new DaoException("Can't get contract by id: " + id + '.', e);
         }
         return Optional.ofNullable(contract);
     }
+
+
 
     @Override
     public List<Contract> getAll() throws DaoException {
@@ -78,7 +88,7 @@ public class ContractDaoImpl implements ContractDao {
                         contract.getTariff().getId(), contract.getUser().getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't insert new contract: %1$s .", contract), e);
+            LOGGER.error("Can't insert new contract: {}", contract, e);
             throw new DaoException("Can't insert new contract: "+contract+'.', e);
         }
     }
@@ -92,7 +102,7 @@ public class ContractDaoImpl implements ContractDao {
                         contract.getTariff().getId(), contract.getUser().getId());
             statement.executeUpdate();
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't update contract: %1$s.", contract), e);
+            LOGGER.error("Can't update contract: {}.", contract, e);
             throw new DaoException("Can't update contract: " + contract +'.', e);
         }
     }
@@ -104,7 +114,7 @@ public class ContractDaoImpl implements ContractDao {
             statement.setInt(1, contractId);
             statement.executeUpdate();
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't delete user by id: %1$s.", contractId), e);
+            LOGGER.error("Can't delete user by id: {}", contractId, e);
             throw new DaoException("Can't delete user by id: " + contractId + '.', e);
         }
     }

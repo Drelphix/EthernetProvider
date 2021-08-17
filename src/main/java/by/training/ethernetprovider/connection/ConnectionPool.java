@@ -5,6 +5,9 @@ import by.training.ethernetprovider.exception.DatabaseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -33,14 +36,14 @@ public class ConnectionPool {
         return ConnectionPoolHolder.INSTANCE;
     }
 
-    public ProxyConnection getConnection()  {
-        ProxyConnection connection = null;
+    public Connection getConnection()  {
+        Connection connection = null;
         try {
             if (connectionPool.isEmpty()) {
                 addConnectionsToPool(1);
             }
             connection = connectionPool.take();
-            usedConnections.put(connection);
+            usedConnections.put((ProxyConnection)connection);
         } catch (InterruptedException e) {
             LOGGER.error("There is an error in thread.", e);
             Thread.currentThread().interrupt();
@@ -50,17 +53,19 @@ public class ConnectionPool {
         return connection;
     }
 
-    public boolean releaseConnection(ProxyConnection connection) {
+    public void releaseConnection(Connection connection) {
         try {
             if (getPoolSize() < DEFAULT_POOL_SIZE) {
-                connectionPool.put(connection);
+                connectionPool.put((ProxyConnection)connection);
             }
-            return usedConnections.remove(connection);
+            usedConnections.remove(connection);
+            connection.close();
         } catch (InterruptedException e) {
             LOGGER.error("There is an error in thread.", e);
             Thread.currentThread().interrupt();
+        } catch (SQLException e){
+            LOGGER.error("Can't close connection", e);
         }
-        return false;
     }
 
     public void addConnectionsToPool(int count) throws ConnectionPoolException {
@@ -68,7 +73,8 @@ public class ConnectionPool {
                 if(getPoolSize() + count <= MAX_CONNECTIONS) {
                     ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
                     for (int i = 0; i < count; i++) {
-                        connectionPool.put(connectionFactory.getConnection());
+                        Connection connection = connectionFactory.getConnection();
+                        connectionPool.put(new ProxyConnection(connection));
                     }
                 }
         } catch (DatabaseException e) {
@@ -79,7 +85,35 @@ public class ConnectionPool {
         }
     }
 
+    public void destroyConnectionPool() {
+            connectionPool.parallelStream().forEach(connection -> {
+                try {
+                    connection.closeReally();
+                } catch (SQLException e) {
+                    LOGGER.error("Can't close connection from connection pool", e);
+                }
+            });
+            usedConnections.parallelStream().forEach(connection -> {
+                try {
+                    connection.closeReally();
+                } catch (SQLException e) {
+                    LOGGER.error("Can't close connection from used connection pool", e);
+                }
+            });
+            unregisterDrivers();
+    }
+
     public int getPoolSize() {
         return usedConnections.size() + connectionPool.size();
+    }
+
+    private void unregisterDrivers() {
+        DriverManager.getDrivers().asIterator().forEachRemaining(driver -> {
+            try {
+                DriverManager.deregisterDriver(driver);
+            } catch (SQLException e) {
+                LOGGER.error("Can't unregister drivers ", e);
+            }
+        });
     }
 }

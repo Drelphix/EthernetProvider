@@ -44,10 +44,10 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
     @Language("SQL")
     private static final String UPDATE_PASSWORD_BY_USERNAME = "UPDATE users SET password = ? WHERE login = ?";
     @Language("SQL")
-    private static final String SELECT_USER_BY_NAME = "SELECT user_id, name, surname, city, address, login, email, " +
+    private static final String SELECT_USER_BY_LOGIN = "SELECT id_user, name, surname, city, address, login, email, " +
             "balance, roles.role, statuses.status FROM provider.users "+
-            "RIGHT JOIN roles ON users.id_role = roles.id_role WHERE name = ?"+
-            "JOIN statuses ON users.id_status = statuses.id_status;";
+            "RIGHT JOIN roles ON users.id_role = roles.id_role "+
+            "JOIN statuses ON users.id_status = statuses.id_status WHERE users.login = ?;";
     @Language("SQL")
     private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id_user = ?";
     @Language("SQL")
@@ -56,6 +56,13 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
     private static final String UPDATE_USER_STATUS_BY_EMAIL = "UPDATE users SET id_status = ? WHERE email = ?";
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
+    private static class UserDaoHolder{
+        private static final UserDaoImpl instance = new UserDaoImpl();
+    }
+
+    public static UserDaoImpl getInstance(){
+        return UserDaoHolder.instance;
+    }
 
     @Override
     public Optional<User> getById(int id) throws DaoException {
@@ -67,7 +74,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
                 user = getUser(result);
             }
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't find user by id: %1$s.",id), e);
+            LOGGER.error("Can't find user by id: {}",id, e);
             throw new DaoException("Can't find user by id: " + id, e);
         }
         return Optional.ofNullable(user);
@@ -96,7 +103,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             setUser(statement, user.getName(), user.getSurname(), user.getCity(), user.getAddress(), user.getLogin(), user.getEmail(), roleId, statusId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't save user: %1$s", user), e);
+            LOGGER.error("Can't save user: {}", user, e);
             throw new DaoException("Can't save user: " + user, e);
         }
     }
@@ -110,7 +117,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             statement.setInt(9, user.getId());
             statement.executeUpdate();
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't update user: %1$s", user), e);
+            LOGGER.error("Can't update user: {}", user, e);
             throw  new DaoException("Can't update user: " + user, e);
         }
     }
@@ -121,7 +128,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             statement.setInt(1, user.getId());
             statement.executeUpdate();
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't delete user by id: %1$s", user.getId()), e);
+            LOGGER.error("Can't delete user by id: {}", user.getId(), e);
             throw new DaoException("Can't delete user by id: "+user.getId(), e);
         }
     }
@@ -136,22 +143,22 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             statement.setInt(5, getStatusIdByName(Status.INACTIVE.getValue()));
             return statement.executeUpdate() != 0;
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't register user: %1$s", username), e);
+            LOGGER.error("Can't register user: {}", username, e);
             throw new DaoException("Can't register user: "+ username, e);
         }
     }
 
     @Override
-    public Optional<User> findUserByName(String username) throws DaoException {
+    public Optional<User> findUserByUsername(String username) throws DaoException {
         User user = null;
-        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_USER_BY_NAME)) {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_USER_BY_LOGIN)) {
             statement.setString(1, username);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
                 user = getUser(result);
             }
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't find user by name: %1$s", username), e);
+            LOGGER.error("Can't find user by name: {}", username, e);
             throw new DaoException("Can't find user by name: " + username, e);
         }
         return Optional.ofNullable(user);
@@ -164,7 +171,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             statement.setString(2, username);
             return statement.executeUpdate() != 0;
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't update password by username: %1$s", username), e);
+            LOGGER.error("Can't update password by username: {}", username, e);
             throw new DaoException("Can't update password by username: " + username, e);
         }
     }
@@ -176,7 +183,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             statement.setString(2, email);
             return statement.executeUpdate() != 0;
         } catch (SQLException e){
-            LOGGER.error(String.format("Can't update status by email: %1$s",email), e);
+            LOGGER.error("Can't update status by email: {}",email, e);
             throw new DaoException("Can't update status by email: " + email, e);
         }
     }
@@ -224,7 +231,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             result.first();
             return result.getInt(ROLE_ID_ROLE);
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't find role by name: %1$s", name), e);
+            LOGGER.error("Can't find role by name: {}", name, e);
             throw new DaoException("Can't find role by name: " + name, e);
         }
     }
@@ -236,7 +243,7 @@ public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
             result.first();
             return result.getInt(STATUS_ID_STATUS);
         } catch (SQLException e) {
-            LOGGER.error(String.format("Can't find status by name: %1$s", name), e);
+            LOGGER.error("Can't find status by name: {}", name, e);
             throw new DaoException("Can't find status by name: " + name, e);
         }
     }

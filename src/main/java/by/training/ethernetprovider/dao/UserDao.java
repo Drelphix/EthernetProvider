@@ -10,7 +10,7 @@ public interface UserDao extends ProviderDao<User> { //TODO 15.08.2021 15:20 :
 
     boolean registerUser(String username, String password, String email) throws DaoException;
 
-    Optional<User> findUserByName(String username) throws DaoException;
+    Optional<User> findUserByUsername(String username) throws DaoException;
 
     boolean updatePasswordByUsername(String username, String password) throws DaoException;
 

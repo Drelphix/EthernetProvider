@@ -12,6 +12,7 @@ public class Promotion extends ProviderEntity{
     public Promotion(int id){
         super(id);
     }
+
     public Promotion(int id, String name, String description, byte discount, LocalDate startDate, LocalDate endDate) {
         super(id);
         this.name = name;

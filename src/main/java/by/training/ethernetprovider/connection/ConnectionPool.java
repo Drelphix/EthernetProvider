@@ -37,13 +37,13 @@ public class ConnectionPool {
     }
 
     public Connection getConnection()  {
-        Connection connection = null;
+        ProxyConnection connection = null;
         try {
             if (connectionPool.isEmpty()) {
                 addConnectionsToPool(1);
             }
             connection = connectionPool.take();
-            usedConnections.put((ProxyConnection)connection);
+            usedConnections.put(connection);
         } catch (InterruptedException e) {
             LOGGER.error("There is an error in thread.", e);
             Thread.currentThread().interrupt();
@@ -53,19 +53,20 @@ public class ConnectionPool {
         return connection;
     }
 
-    public void releaseConnection(Connection connection) {
+    public boolean releaseConnection(ProxyConnection connection) {
         try {
             if (getPoolSize() < DEFAULT_POOL_SIZE) {
-                connectionPool.put((ProxyConnection)connection);
+                connectionPool.put(connection);
             }
-            usedConnections.remove(connection);
-            connection.close();
+            connection.closeReally();
+            return usedConnections.remove(connection);
         } catch (InterruptedException e) {
             LOGGER.error("There is an error in thread.", e);
             Thread.currentThread().interrupt();
         } catch (SQLException e){
             LOGGER.error("Can't close connection", e);
         }
+        return false;
     }
 
     public void addConnectionsToPool(int count) throws ConnectionPoolException {
@@ -112,7 +113,7 @@ public class ConnectionPool {
             try {
                 DriverManager.deregisterDriver(driver);
             } catch (SQLException e) {
-                LOGGER.error("Can't unregister drivers ", e);
+                LOGGER.error("Can't unregister drivers", e);
             }
         });
     }

@@ -17,5 +17,4 @@ public interface ProviderDao<T extends ProviderEntity> {
     void update(T entity) throws DaoException;
 
     void delete(T entity) throws DaoException;
-
 }

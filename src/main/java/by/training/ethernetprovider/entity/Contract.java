@@ -13,6 +13,7 @@ public class Contract extends ProviderEntity {
     public Contract(int id){
         super(id);
     }
+
     public Contract(int id, LocalDate startDate, LocalDate endDate, byte discount, Tariff tariff, boolean isActive, User user) {
         super(id);
         this.startDate = startDate;

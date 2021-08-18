@@ -8,7 +8,6 @@ import by.training.ethernetprovider.entity.User;
 import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.intellij.lang.annotations.Language;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -20,41 +19,32 @@ import java.util.Optional;
 
 import static by.training.ethernetprovider.dao.impl.ColumnName.*;
 
-public class UserDaoImpl implements UserDao { //TODO 15.08.2021 14:39 :
+public class UserDaoImpl implements UserDao { //TODO 18.08.2021 14:39 :
     private static final Logger LOGGER = LogManager.getLogger();
-    @Language("SQL")
+    private final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String SELECT_USER_BY_ID = "SELECT id_user, name, surname, city, address, login, email, " +
             "balance, roles.role, statuses.status FROM provider.users " +
             "RIGHT JOIN roles ON users.id_role = roles.id_role " +
             "JOIN statuses ON users.id_status = statuses.id_status WHERE id_user = ?";
-    @Language("SQL")
     private static final String SELECT_ALL_USERS = "SELECT id_user, name, surname, city, address, login, email, " +
             "balance, roles.role, statuses.status FROM provider.users " +
             "RIGHT JOIN roles ON users.id_role = roles.id_role " +
             "JOIN statuses ON users.id_status = statuses.id_status;";
-    @Language("SQL")
     private static final String INSERT_NEW_USER = "INSERT INTO users (name, surname, city, address, login, " +
             "email, id_role, id_status,  balance, id_user) VALUES ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
     private static final String SELECT_ID_ROLE_BY_NAME = "SELECT id_role FROM roles WHERE role = ?";
-    @Language("SQL")
     private static final String SELECT_ID_STATUS_BY_NAME = "SELECT id_status FROM statuses WHERE status = ?";
-    @Language("SQL")
     private static final String UPDATE_USER_BY_USER = "UPDATE users SET name = ?, surname = ?, city = ?, address = ?," +
             "login = ?, email = ?, id_role = ?, id_status = ? WHERE id_user = ?";
-    @Language("SQL")
     private static final String UPDATE_PASSWORD_BY_USERNAME = "UPDATE users SET password = ? WHERE login = ?";
-    @Language("SQL")
     private static final String SELECT_USER_BY_LOGIN = "SELECT id_user, name, surname, city, address, login, email, " +
             "balance, roles.role, statuses.status FROM provider.users "+
             "RIGHT JOIN roles ON users.id_role = roles.id_role "+
             "JOIN statuses ON users.id_status = statuses.id_status WHERE users.login = ?;";
-    @Language("SQL")
     private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id_user = ?";
-    @Language("SQL")
     private static final String INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL = "INSERT INTO users (name, password, email, role_id, status_id) VALUES ?, ?, ?, ?, ?";
-    @Language("SQL")
     private static final String UPDATE_USER_STATUS_BY_EMAIL = "UPDATE users SET id_status = ? WHERE email = ?";
-    private final ConnectionPool connectionPool = ConnectionPool.getInstance();
+
 
     private static class UserDaoHolder{
         private static final UserDaoImpl instance = new UserDaoImpl();

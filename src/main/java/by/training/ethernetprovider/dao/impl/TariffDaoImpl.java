@@ -1,12 +1,12 @@
 package by.training.ethernetprovider.dao.impl;
 
 import by.training.ethernetprovider.connection.ConnectionPool;
-import by.training.ethernetprovider.dao.ContractDao;
 import by.training.ethernetprovider.dao.TariffDao;
 import by.training.ethernetprovider.entity.Promotion;
-import by.training.ethernetprovider.entity.ProviderEntity;
 import by.training.ethernetprovider.entity.Tariff;
 import by.training.ethernetprovider.exception.DaoException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.intellij.lang.annotations.Language;
 
 import java.math.BigDecimal;
@@ -20,8 +20,20 @@ import java.util.Optional;
 import static by.training.ethernetprovider.dao.impl.ColumnName.*;
 
 public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
-    @Language("SQL")
-    private static final String SELECT_ALL_TARIFFS="SELECT id_tariff, name, description, price, is_archive, id_promotion FROM tariffs ";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String SELECT_ALL_TARIFFS="SELECT id_tariff, name, description, price, is_archive, " +
+            "id_promotion FROM tariffs ";
+    private static final String SELECT_ALL_NOT_ARCHIVE_TARIFFS="SELECT  id_tariff, name, description, price, " +
+            "id_promotion, is_archive FROM tariffs where is_archive = false";
+    private static final String SELECT_TARIFF_BY_NAME = "SELECT id_tariff, name, description, price, is_archive, " +
+            "id_promotion FROM tariffs WHERE name = ?";
+    private static final String SELECT_TARIFF_BY_ID = "SELECT id_tariff, name, description, price, is_archive, " +
+            "id_promotion FROM tariffs WHERE id_tariff = ?";
+    private static final String INSERT_NEW_TARIFF = "INSERT INTO tariffs ( name, description,  " +
+            "is_archive, price, id_promotion, id_tariff) VALUES ?,?,?,?,?,?";
+    private static final String UPDATE_TARIFF_BY_TARIFF = "UPDATE tariffs SET name = ?, description = ?, is_archive = ?," +
+            " price = ?, id_promotion = ? WHERE id_tariff=?";
+    private static final String DELETE_TARIFF_BY_ID = "DELETE FROM tariffs where id_tariff = ?";
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
     private static class TariffDaoHolder{
@@ -33,8 +45,19 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
     }
 
     @Override
-    public Optional<Tariff> getById(int id) {
-        return null;
+    public Optional<Tariff> getById(int id) throws DaoException {
+        Tariff tariff = null;
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_TARIFF_BY_ID)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.first()) {
+                tariff = getTariff(resultSet);
+            }
+        } catch (SQLException e){
+            logger.error("Can't get tariff by name ", e);
+            throw new DaoException("Can't get tariff by name ", e);
+        }
+        return Optional.ofNullable(tariff);
     }
 
     @Override
@@ -43,37 +66,107 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
         try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_TARIFFS)){
             ResultSet result = statement.executeQuery();
             while (result.next()){
-                int tariffId = result.getInt(TARIFF_ID_TARIFF);
-                String name = result.getString(TARIFF_NAME);
-                String description = result.getString(TARIFF_DESCRIPTION);
-                BigDecimal price = result.getBigDecimal(TARIFF_PRICE);
-                boolean isArchive = result.getBoolean(TARIFF_IS_ARCHIVE);
-                Promotion promotion = new Promotion(result.getInt(TARIFF_ID_PROMOTION));
-                tariffs.add(new Tariff(tariffId, name, description, price, isArchive, promotion));
+                tariffs.add(getTariff(result));
             }
         } catch (SQLException e){
+            logger.error("Can't get all tariffs", e);
             throw new DaoException("Can't get all tariffs", e);
         }
         return tariffs;
     }
 
     @Override
-    public void save(Tariff tariff) {
-
+    public void save(Tariff tariff) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_TARIFF)){
+            setTariff(statement, tariff.getName(), tariff.getDescription(), tariff.isArchive(), tariff.getPrice(), tariff.getPromotion().getId());
+            statement.setInt(6, tariff.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            logger.error("Can't add new tariff", e);
+            throw new DaoException("Can't add new tariff", e);
+        }
     }
 
     @Override
-    public void update(Tariff tariff) {
-
+    public void update(Tariff tariff) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(UPDATE_TARIFF_BY_TARIFF)){
+            setTariff(statement, tariff.getName(), tariff.getDescription(), tariff.isArchive(), tariff.getPrice(), tariff.getPromotion().getId());
+            statement.setInt(6, tariff.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            logger.error("Can't update tariff", e);
+            throw new DaoException("Can't update tariff", e);
+        }
     }
 
     @Override
-    public void delete(Tariff tariff) {
-
+    public void delete(Tariff tariff) throws DaoException {
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(DELETE_TARIFF_BY_ID)){
+            statement.setInt(1, tariff.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            logger.error("Can't delete tariff", e);
+            throw new DaoException("Can't delete tariff", e);
+        }
     }
     
     @Override
-    public Tariff getTariffByName(String name) {
-        return null;
+    public Optional<Tariff> getTariffByName(String name) throws DaoException {
+        Tariff tariff = null;
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_TARIFF_BY_NAME)) {
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.first()) {
+                tariff = getTariff(resultSet);
+            }
+        } catch (SQLException e){
+            logger.error("Can't get tariff by name ", e);
+            throw new DaoException("Can't get tariff by name ", e);
+        }
+        return Optional.ofNullable(tariff);
     }
+
+    @Override
+    public List<Tariff> getNotArchiveTariffs() throws DaoException {
+        List<Tariff> tariffs = new ArrayList<>();
+        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_NOT_ARCHIVE_TARIFFS)){
+            ResultSet result = statement.executeQuery();
+            while (result.next()){
+                tariffs.add(getTariff(result));
+            }
+        } catch (SQLException e) {
+            logger.error("Can't get not archive tariffs", e);
+            throw new DaoException("Can't get not archive tariffs", e);
+        }
+        return tariffs;
+    }
+
+    private Tariff getTariff(ResultSet result) throws DaoException {
+        try {
+            int id = result.getInt(TARIFF_ID_TARIFF);
+            Promotion promotion = new Promotion(result.getInt(TARIFF_ID_PROMOTION));
+            String name = result.getString(TARIFF_NAME);
+            String description = result.getString(TARIFF_DESCRIPTION);
+            BigDecimal price = result.getBigDecimal(TARIFF_PRICE);
+            boolean isArchive = result.getBoolean(TARIFF_IS_ARCHIVE);
+            return new Tariff(id,  name, description, price, isArchive, promotion);
+        } catch (SQLException e){
+            logger.error("Can't get tariff from result set", e);
+            throw new DaoException("Can't get tariff from result set", e);
+        }
+    }
+
+    private void setTariff(PreparedStatement statement, String name, String description, boolean isArchive, BigDecimal price, int promotionId) throws DaoException {
+        try {
+            statement.setString(1, name);
+            statement.setString(2, description);
+            statement.setBoolean(3, isArchive);
+            statement.setBigDecimal(4, price);
+            statement.setInt(5, promotionId);
+        } catch (SQLException e){
+            logger.error("Can't set tariff", e);
+            throw new DaoException("Can't set tariff", e);
+        }
+    }
+
 }

@@ -27,9 +27,10 @@ public class MainServlet extends HttpServlet {
         TariffDaoImpl tariffDao = TariffDaoImpl.getInstance();
         List<Tariff> tariffs = null;
         try {
-            tariffs = tariffDao.getAll();
+            tariffs = tariffDao.getNotArchiveTariffs();
         } catch (DaoException e) {
-            logger.error("Can't get all tariffs.",e);
+            logger.error("Can't get tariffs.",e);
+            throw new ServletException("Can't get tariffs", e);
         }
 
         request.setAttribute("tariffs", tariffs);

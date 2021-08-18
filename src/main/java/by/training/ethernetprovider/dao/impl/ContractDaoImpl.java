@@ -24,18 +24,13 @@ import static by.training.ethernetprovider.dao.impl.ColumnName.*;
 public class ContractDaoImpl implements ContractDao {
     private static final Logger LOGGER = LogManager.getLogger();
     private ConnectionPool connectionPool = ConnectionPool.getInstance();
-    @Language("SQL")
     private static final String SELECT_CONTRACT_BY_ID = "SELECT id_contract, start_date, end_date, discount, " +
             "is_active, id_tariff, id_user FROM contracts WHERE id=?";
-    @Language("SQL")
     private static final String SELECT_ALL_CONTRACTS = "SELECT id_contract, start_date, end_date, discount, " +
             "is_active, id_tariff, id_user FROM contracts";
-    @Language("SQL")
     private static final String UPDATE_CONTRACT_BY_CONTRACT = "UPDATE contracts SET start_date = ?, end_date = ?, " +
             "discount = ?, is_active = ?, id_tariff = ?, id_user = ? WHERE id = ?";
-    @Language("SQL")
     private static final String DELETE_CONTRACT_BY_ID = "DELETE FROM contracts WHERE id_contract = ?";
-    @Language("SQL")
     private static final String INSERT_NEW_CONTRACT = "INSERT INTO contracts (start_date, end_date, discount, " +
             "is_active, id_tariff, id_user) values ?, ?, ?, ?, ?, ?";
 

@@ -156,7 +156,8 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
         }
     }
 
-    private void setTariff(PreparedStatement statement, String name, String description, boolean isArchive, BigDecimal price, int promotionId) throws DaoException {
+    private void setTariff(PreparedStatement statement, String name, String description, boolean isArchive,
+                           BigDecimal price, int promotionId) throws DaoException {
         try {
             statement.setString(1, name);
             statement.setString(2, description);

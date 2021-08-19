@@ -7,6 +7,7 @@ import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,13 +18,18 @@ import java.util.Optional;
 
 import static by.training.ethernetprovider.dao.impl.ColumnName.*;
 
-public class PromotionDaoImpl implements PromotionDao { //TODO 15.08.2021 15:20 :
+public class PromotionDaoImpl implements PromotionDao { //TODO 19.08.2021 15:20 :
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String SELECT_PROMOTION_BY_ID = "SELECT id_promotion, name, description, discount, " +
             "start_date, end_date FROM promotions WHERE id_promotion = ?";
     private static final String SELECT_ALL_PROMOTIONS = "SELECT id_promotion, name, description, discount, " +
             "start_date, end_date FROM promotions";
+    private static final String INSERT_NEW_PROMOTION = "INSERT INTO promotions (name, description, discount, " +
+            "start_date, end_date, id_promotion) VALUES ?,?,?,?,?,?";
+    private static final String UPDATE_PROMOTION = "UPDATE promotions SET name = ?, description = ?, discount = ?," +
+            "start_date = ?, end_date =? WHERE id_promotion = ?";
+    private static final String DELETE_PROMOTION = "DELETE FROM promotions WHERE id_promotion = ?";
 
     private static class PromotionDaoHolder{
         private static final ContractDaoImpl instance = new ContractDaoImpl();
@@ -65,18 +71,40 @@ public class PromotionDaoImpl implements PromotionDao { //TODO 15.08.2021 15:20 
     }
 
     @Override
-    public void save(Promotion promotion) {
-
+    public void save(Promotion promotion) throws DaoException {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_PROMOTION)){
+            setPromotion(statement, promotion.getName(), promotion.getDescription(), promotion.getDiscount(),
+                    promotion.getStartDate(), promotion.getEndDate());
+            statement.setInt(6,promotion.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            LOGGER.error("Can't add new promotion", e);
+            throw new DaoException("Can't add new promotion", e);
+        }
     }
 
     @Override
-    public void update(Promotion promotion) {
-
+    public void update(Promotion promotion) throws DaoException {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(UPDATE_PROMOTION)){
+            setPromotion(statement, promotion.getName(), promotion.getDescription(), promotion.getDiscount(),
+                    promotion.getStartDate(), promotion.getEndDate());
+            statement.setInt(6, promotion.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            LOGGER.error("Can't update promotion", e);
+            throw new DaoException("Can't update promotion", e);
+        }
     }
 
     @Override
-    public void delete(Promotion promotion) {
-
+    public void delete(Promotion promotion) throws DaoException {
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(DELETE_PROMOTION)){
+            statement.setInt(1, promotion.getId());
+            statement.executeUpdate();
+        } catch (SQLException e){
+            LOGGER.error("Can't delete promotion", e);
+            throw new DaoException("Can't delete promotion", e);
+        }
     }
 
     private Promotion getPromotion(ResultSet resultSet) throws DaoException {
@@ -91,6 +119,20 @@ public class PromotionDaoImpl implements PromotionDao { //TODO 15.08.2021 15:20 
         } catch (SQLException e){
             LOGGER.error("Can't get promotion from result set", e);
             throw new DaoException("Can't get promotion from result set", e);
+        }
+    }
+
+    private void setPromotion(PreparedStatement statement, String name, String description, byte discount,
+                              LocalDate startDate, LocalDate endDate) throws DaoException {
+        try {
+            statement.setString(1, name);
+            statement.setString(2, description);
+            statement.setByte(3, discount);
+            statement.setDate(4, Date.valueOf(startDate));
+            statement.setDate(5, Date.valueOf(endDate));
+        } catch (SQLException e){
+            LOGGER.error("Can't set promotion to statement",e);
+            throw new DaoException("Can't set promotion to statement",e);
         }
     }
     

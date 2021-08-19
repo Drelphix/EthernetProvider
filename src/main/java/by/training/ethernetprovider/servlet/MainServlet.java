@@ -32,7 +32,6 @@ public class MainServlet extends HttpServlet {
             logger.error("Can't get tariffs.",e);
             throw new ServletException("Can't get tariffs", e);
         }
-
         request.setAttribute("tariffs", tariffs);
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }

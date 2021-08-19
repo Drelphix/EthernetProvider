@@ -16,6 +16,10 @@
 <h3>Tariffs</h3>
     <form>
     <table>
+        <th>Tariff</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Choose tariff</th>
         <c:forEach var="tariff" items="${tariffs}">
             <tr>
                 <td>${tariff.name}</td>

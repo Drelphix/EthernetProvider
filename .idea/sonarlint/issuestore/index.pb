@@ -27,3 +27,25 @@ s
 Csrc/main/java/by/training/ethernetprovider/dao/impl/ColumnName.java,0\1\0197f33a30f5712d1e12331509e8e995ba8ff63b
 o
 ?src/main/java/by/training/ethernetprovider/dao/ContractDao.java,b\e\be651b0f4f41a4465ecff130725a67d84c988383
+o
+?src/main/java/by/training/ethernetprovider/entity/Contract.java,0\0\001aa70ac474ffdc3962d8b1a4ff573d62d62f5b
+m
+=src/main/java/by/training/ethernetprovider/entity/Tariff.java,7\7\7734bbba513bb4cd3e8c03fde2dfef4d9a812a07
+x
+Hsrc/main/java/by/training/ethernetprovider/dao/impl/ContractDaoImpl.java,4\f\4fcc141cd891057e623ffa2dc290a6b7fbeea66c
+U
+%src/main/webapp/pages/error/error.jsp,0\5\05be68682b6a65ed333d4df2fccebec1d21db6d3
+O
+src/main/webapp/pages/login.jsp,f\9\f917108e3aedac2a9c4cc5dfd98f70b815e92372
+y
+Isrc/main/java/by/training/ethernetprovider/dao/impl/PromotionDaoImpl.java,a\d\ad5462b6cc0ed64e28d3b6733195ee56e68cb625
+V
+&src/main/webapp/pages/registration.jsp,e\3\e31886b9287ca7a73b0da333ef6328e4fb59c86b
+m
+=src/main/java/by/training/ethernetprovider/entity/Status.java,2\0\2055110daf48586444e360b2ae39640285998f44
+v
+Fsrc/main/java/by/training/ethernetprovider/dao/impl/TariffDaoImpl.java,9\c\9c4f7e06fcb7acf5982257d012752b567de70adb
+k
+;src/main/java/by/training/ethernetprovider/dao/UserDao.java,0\f\0fec61eeb616d5458dd035d260d9269748336011
+t
+Dsrc/main/java/by/training/ethernetprovider/dao/impl/UserDaoImpl.java,3\9\39cbe7100b6c27454e8f11bcf6c908c9be353bde

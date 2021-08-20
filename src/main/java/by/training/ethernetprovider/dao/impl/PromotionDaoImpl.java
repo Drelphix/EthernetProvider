@@ -7,10 +7,7 @@ import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +37,10 @@ public class PromotionDaoImpl implements PromotionDao { //TODO 19.08.2021 15:20 
     }
 
     @Override
-    public Optional<Promotion> getById(int id) throws DaoException {
+    public Optional<Promotion> findById(int id) throws DaoException {
         Promotion promotion = null;
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_PROMOTION_BY_ID)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_PROMOTION_BY_ID)){
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if(resultSet.first()){
@@ -56,9 +54,10 @@ public class PromotionDaoImpl implements PromotionDao { //TODO 19.08.2021 15:20 
     }
 
     @Override
-    public List<Promotion> getAll() throws DaoException {
+    public List<Promotion> findAll() throws DaoException {
         List<Promotion> promotions = new ArrayList<>();
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_PROMOTIONS)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_ALL_PROMOTIONS)){
            ResultSet resultSet = statement.executeQuery();
            while (resultSet.next()){
                promotions.add(getPromotion(resultSet));

@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface ProviderDao<T extends ProviderEntity> {
 
-    Optional<T> getById(int id) throws DaoException;
+    Optional<T> findById(int id) throws DaoException;
 
-    List<T> getAll() throws DaoException;
+    List<T> findAll() throws DaoException;
 
     void save(T entity) throws DaoException;
 

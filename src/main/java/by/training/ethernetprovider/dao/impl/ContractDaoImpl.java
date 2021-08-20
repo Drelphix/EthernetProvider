@@ -8,12 +8,8 @@ import by.training.ethernetprovider.entity.User;
 import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.intellij.lang.annotations.Language;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +39,10 @@ public class ContractDaoImpl implements ContractDao {
     }
 
     @Override
-    public Optional<Contract> getById(int id) throws DaoException {
+    public Optional<Contract> findById(int id) throws DaoException {
         Contract contract = null;
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_CONTRACT_BY_ID)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_CONTRACT_BY_ID)){
             statement.setInt(1, id);
             ResultSet result = statement.executeQuery();
             if(result.next()) {
@@ -61,7 +58,7 @@ public class ContractDaoImpl implements ContractDao {
 
 
     @Override
-    public List<Contract> getAll() throws DaoException {
+    public List<Contract> findAll() throws DaoException {
         List<Contract> contracts = new ArrayList<>();
         try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_CONTRACTS);
             ResultSet result = statement.executeQuery()){

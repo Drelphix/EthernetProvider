@@ -7,9 +7,9 @@ import by.training.ethernetprovider.entity.Tariff;
 import by.training.ethernetprovider.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.intellij.lang.annotations.Language;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,10 +19,10 @@ import java.util.Optional;
 
 import static by.training.ethernetprovider.dao.impl.ColumnName.*;
 
-public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
+public class TariffDaoImpl implements TariffDao {
     private static final Logger logger = LogManager.getLogger();
-    private static final String SELECT_ALL_TARIFFS="SELECT id_tariff, name, description, price, is_archive, " +
-            "id_promotion FROM tariffs ";
+    private static final String SELECT_ALL_TARIFFS="SELECT id_tariff, name, description, price, is_archive, "+
+            "id_promotion FROM tariffs";
     private static final String SELECT_ALL_NOT_ARCHIVE_TARIFFS="SELECT  id_tariff, name, description, price, " +
             "id_promotion, is_archive FROM tariffs where is_archive = false";
     private static final String SELECT_TARIFF_BY_NAME = "SELECT id_tariff, name, description, price, is_archive, " +
@@ -45,9 +45,10 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
     }
 
     @Override
-    public Optional<Tariff> getById(int id) throws DaoException {
+    public Optional<Tariff> findById(int id) throws DaoException {
         Tariff tariff = null;
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_TARIFF_BY_ID)) {
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_TARIFF_BY_ID)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
@@ -61,9 +62,10 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
     }
 
     @Override
-    public List<Tariff> getAll() throws DaoException {
+    public List<Tariff> findAll() throws DaoException {
         List<Tariff> tariffs = new ArrayList<>();
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_TARIFFS)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_ALL_TARIFFS)){
             ResultSet result = statement.executeQuery();
             while (result.next()){
                 tariffs.add(getTariff(result));
@@ -77,7 +79,8 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
 
     @Override
     public void save(Tariff tariff) throws DaoException {
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_TARIFF)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(INSERT_NEW_TARIFF)){
             setTariff(statement, tariff.getName(), tariff.getDescription(), tariff.isArchive(), tariff.getPrice(), tariff.getPromotion().getId());
             statement.setInt(6, tariff.getId());
             statement.executeUpdate();
@@ -89,7 +92,8 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
 
     @Override
     public void update(Tariff tariff) throws DaoException {
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(UPDATE_TARIFF_BY_TARIFF)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(UPDATE_TARIFF_BY_TARIFF)){
             setTariff(statement, tariff.getName(), tariff.getDescription(), tariff.isArchive(), tariff.getPrice(), tariff.getPromotion().getId());
             statement.setInt(6, tariff.getId());
             statement.executeUpdate();
@@ -101,7 +105,8 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
 
     @Override
     public void delete(Tariff tariff) throws DaoException {
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(DELETE_TARIFF_BY_ID)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(DELETE_TARIFF_BY_ID)){
             statement.setInt(1, tariff.getId());
             statement.executeUpdate();
         } catch (SQLException e){
@@ -111,9 +116,10 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
     }
     
     @Override
-    public Optional<Tariff> getTariffByName(String name) throws DaoException {
+    public Optional<Tariff> findTariffByName(String name) throws DaoException {
         Tariff tariff = null;
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_TARIFF_BY_NAME)) {
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_TARIFF_BY_NAME)) {
             statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
@@ -127,9 +133,10 @@ public class TariffDaoImpl implements TariffDao { //TODO 15.08.2021 15:20 :
     }
 
     @Override
-    public List<Tariff> getNotArchiveTariffs() throws DaoException {
+    public List<Tariff> findNotArchiveTariffs() throws DaoException {
         List<Tariff> tariffs = new ArrayList<>();
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(SELECT_ALL_NOT_ARCHIVE_TARIFFS)){
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_ALL_NOT_ARCHIVE_TARIFFS)){
             ResultSet result = statement.executeQuery();
             while (result.next()){
                 tariffs.add(getTariff(result));

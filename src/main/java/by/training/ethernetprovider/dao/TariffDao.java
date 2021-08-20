@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TariffDao extends ProviderDao<Tariff> { //TODO 15.08.2021 15:20 :
 
-    public Optional<Tariff> getTariffByName(String name) throws DaoException;
+    public Optional<Tariff> findTariffByName(String name) throws DaoException;
 
-    public List<Tariff> getNotArchiveTariffs() throws DaoException;
+    public List<Tariff> findNotArchiveTariffs() throws DaoException;
 }

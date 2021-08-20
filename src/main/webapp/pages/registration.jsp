@@ -6,16 +6,37 @@
 </head>
 <body>
 <center>
-    <form>
-        <span>Login</span>
-        <input type="text" name="username">
-        <span>Password:</span>
-        <input type="password" name="password">
-        <span>Repeat password:</span>
-        <input type="password" name="passwordRepeat">
-        <span>Email:</span>
-        <input type="email" name="email">
-        <input type="submit" formaction="/registration" formmethod="post" value="Register">
+    <form action="/registration" method="post">
+        <table>
+            ${message}
+            <tr>
+                <td><span>Login</span></td>
+            </tr>
+            <tr>
+                <td> <input type="text" name="username" id="username" value="${username}"></td>
+            </tr>
+            <tr>
+                <td><span>Password:</span></td>
+            </tr>
+            <tr>
+                <td> <input type="password" name="password" id="password" value="${password}"></td>
+            </tr>
+            <tr>
+                <td><span>Repeat password:</span></td>
+            </tr>
+            <tr>
+                <td><input type="password" name="passwordRepeat"></td>
+            </tr>
+            <tr>
+                <td><span>Email:</span></td>
+            </tr>
+            <tr>
+                <td><input type="email" name="email" id="email"value="${email}"></td>
+            </tr>
+            <tr>
+                <td><input type="submit"  value="Register"> </td>
+            </tr>
+        </table>
     </form>
 </center>
 </body>

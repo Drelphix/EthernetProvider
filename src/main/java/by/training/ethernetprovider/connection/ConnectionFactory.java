@@ -1,7 +1,6 @@
 package by.training.ethernetprovider.connection;
 
 
-import by.training.ethernetprovider.exception.DatabaseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +11,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionFactory {
+
+class ConnectionFactory {
     private static final Logger LOGGER = LogManager.getLogger();
     private static String URL;
     private static final String RESOURCE = "properties/database.properties";
@@ -21,11 +21,12 @@ public class ConnectionFactory {
     private static class ConnectionFactoryHandler{
         private static final ConnectionFactory instance = new ConnectionFactory();
     }
-    public static ConnectionFactory getInstance() {
+
+    protected static ConnectionFactory getInstance() {
         return ConnectionFactoryHandler.instance;
     }
 
-    public ConnectionFactory ()  {
+    private ConnectionFactory ()  {
         String driver = null;
         try(InputStream inputStream = ConnectionFactory.class.getClassLoader().getResourceAsStream(RESOURCE)){
             databaseProperties.load(inputStream);
@@ -41,12 +42,7 @@ public class ConnectionFactory {
         }
     }
 
-    public Connection getConnection() throws DatabaseException {
-        try {
+    protected Connection getConnection() throws SQLException {
             return DriverManager.getConnection(URL,databaseProperties);
-        } catch (SQLException e) {
-            throw new DatabaseException("Can't get connection. Url: " + URL + ", properties: " + databaseProperties);
-        }
-
     }
 }

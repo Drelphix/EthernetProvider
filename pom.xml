@@ -10,8 +10,8 @@
     <packaging>war</packaging>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -58,13 +58,13 @@
             <scope>test</scope>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>22.0.0</version>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
         </dependency>
+
     </dependencies>
 
 <build><plugins><plugin>
@@ -78,7 +78,17 @@
         <password>robot</password>
         <path>/</path>
     </configuration>
-</plugin></plugins></build>
+</plugin>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+            <webappDirectory>C:\Users\Drelphix\.SmartTomcat\EthernetProvider\EthernetProvider\webapps\ROOT</webappDirectory>
+        </configuration>
+    </plugin>
+</plugins>
+</build>
 
 
 </project>

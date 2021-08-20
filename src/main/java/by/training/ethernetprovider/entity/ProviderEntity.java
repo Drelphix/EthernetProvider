@@ -3,9 +3,12 @@ package by.training.ethernetprovider.entity;
 public abstract class ProviderEntity {
     private int id;
 
+    public ProviderEntity() {}
     public ProviderEntity(int id) {
         this.id = id;
     }
+
+
 
     public int getId() {
         return id;

@@ -13,6 +13,10 @@ public class User extends ProviderEntity{
    private Role role;
    private Status status;
 
+   public User(){
+      super();
+   };
+
    public User(int id){
       super(id);
    }

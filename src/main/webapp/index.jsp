@@ -7,10 +7,17 @@
 </head>
 <body>
 <center>
-<div align="right">
-    <a href="/login">Login</a>
-    <a href="/registration">Registration</a>
-</div>
+    <div align="right">
+    <c:choose>
+        <c:when test="${sessionScope.username != null}">
+            <a href="/user?=${sessionScope.username}">${sessionScope.username}</a>
+        </c:when>
+        <c:otherwise>
+            <a href="/login">Login</a>
+            <a href="/registration">Registration</a>
+        </c:otherwise>
+    </c:choose>
+    </div>
 <h1>The best Internet provider in the Universe</h1>
 <h2>EthernetProviderX</h2>
 <h3>Tariffs</h3>
@@ -25,7 +32,7 @@
                 <td>${tariff.name}</td>
                 <td>${tariff.description}</td>
                 <td>${tariff.price}</td>
-                <td><input type="submit" value="Connect tariff" formmethod="post" formaction="\connectTariff?id=${tariff.id}"></td>
+                <td><input type="submit" value="Connect tariff" formmethod="POST" formaction="\connectTariff?id=${tariff.id}"></td>
             </tr>
     </c:forEach>
     </table>

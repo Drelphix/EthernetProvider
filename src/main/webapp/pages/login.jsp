@@ -7,11 +7,15 @@
 <body>
 <center>
 <form>
-    <span>Login/email:</span>
-    <input type="text" name="username">
-    <span>Password:</span>
-    <input type="password" name="password">
-    <input type="submit" formaction="/login" formmethod="post" value="Login">
+    ${message}
+    <table>
+        <tr><td><span>Login/email:</span></td></tr>
+        <tr><td><input type="text" name="username" value="${username}"></td></tr>
+        <tr><td><span>Password:</span></td></tr>
+        <tr><td><input type="password" name="password" value="${password}"></td></tr>
+        <tr><td><input type="submit" formaction="/login" formmethod="post" value="Login"></td></tr>
+
+    </table>
 </form>
 </center>
 </body>

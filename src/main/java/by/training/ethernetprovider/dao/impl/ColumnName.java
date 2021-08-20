@@ -1,6 +1,8 @@
 package by.training.ethernetprovider.dao.impl;
 
-public class ColumnName {
+public final class ColumnName {
+    private ColumnName(){}
+
     //Table contracts
     public static final String CONTRACT_ID_CONTRACT = "id_contract";
     public static final String CONTRACT_START_DATE = "start_date";

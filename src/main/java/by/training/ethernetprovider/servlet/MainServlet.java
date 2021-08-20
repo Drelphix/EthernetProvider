@@ -12,28 +12,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.EventLogger;
 
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "mainServlet")
+@WebServlet(name = "mainServlet", urlPatterns = "")
 public class MainServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger(MainServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void init() throws ServletException {
+        super.init();
+    }
 
-        TariffDaoImpl tariffDao = TariffDaoImpl.getInstance();
-        List<Tariff> tariffs = null;
-        try {
-            tariffs = tariffDao.getNotArchiveTariffs();
-        } catch (DaoException e) {
-            logger.error("Can't get tariffs.",e);
-            throw new ServletException("Can't get tariffs", e);
-        }
-        request.setAttribute("tariffs", tariffs);
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+       process(request, response);
     }
 
     @Override
@@ -41,10 +37,19 @@ public class MainServlet extends HttpServlet {
         super.doPost(req, resp);
     }
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
+    private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        TariffDaoImpl tariffDao = TariffDaoImpl.getInstance();
+        List<Tariff> tariffs = null;
+        try {
+            tariffs = tariffDao.findNotArchiveTariffs();
+        } catch (DaoException e) {
+            logger.error("Can't get tariffs.",e);
+            log("Can't get tariffs.",e);
+        }
+        request.setAttribute("tariffs", tariffs);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
+
 
     @Override
     public void destroy() {

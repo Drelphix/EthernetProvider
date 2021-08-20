@@ -163,7 +163,8 @@ public class TariffDaoImpl implements TariffDao {
         }
     }
 
-    private void setTariff(PreparedStatement statement, String name, String description, boolean isArchive, BigDecimal price, int promotionId) throws DaoException {
+    private void setTariff(PreparedStatement statement, String name, String description, boolean isArchive,
+                           BigDecimal price, int promotionId) throws DaoException {
         try {
             statement.setString(1, name);
             statement.setString(2, description);

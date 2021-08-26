@@ -43,7 +43,7 @@ public class SignUp implements Command {
             userDao.signUpUser(username, PasswordEncryptor.encode(password), email);
             HttpSession httpSession = request.getSession(true);
             httpSession.setAttribute(Attribute.USERNAME, username);
-            return new Router(UrlRedirect.TO_TARIFF_LIST, Router.RouterType.FORWARD);
+            return new Router(PagePath.REGISTRATION_JSP, Router.RouterType.REDIRECT);
         } catch (DaoException e) {
             LOGGER.error(CANNOT_REGISTER_USER, e);
             request.setAttribute(MESSAGE, CANNOT_REGISTER_USER);

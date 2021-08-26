@@ -1,0 +1,199 @@
+* {
+	 margin: 0;
+	 padding: 0;
+	 list-style: none;
+	 font-family: "Lato", sans-serif;
+	 line-height: 1;
+}
+ body {
+	 background-color: #f5f6f8;
+	 overflow: hidden;
+}
+ .sidebar-navigation {
+	 display: inline-block;
+	 min-height: 100vh;
+	 width: 4%;
+	 background-color: #313443;
+	 float: left;
+}
+ .sidebar-navigation ul {
+	 text-align: center;
+	 color: white;
+	 display: flex;
+	 flex-direction: column;
+	 height: 100%;
+}
+
+.sidebar-navigation ul > :last-child {
+	 margin-top: auto;
+}
+
+ .sidebar-navigation ul li {
+	 padding: 20% 0;
+	 cursor: pointer;
+	 transition: all ease-out 120ms;
+}
+ .sidebar-navigation ul li i {
+	 display: block;
+	 font-size: 2vw;
+	 transition: all ease 450ms;
+}
+
+ .sidebar-navigation ul li:hover i {
+	 color: #98d7ec;
+}
+
+
+ .sidebar-navigation ul li .tooltip {
+	 display: inline-block;
+	 position: absolute;
+	 background-color: #313443;
+	 padding: 0.6% 1%;
+	 border-radius: 3px;
+	 margin: -2.4% 1vw 0 0vh;
+	 left: 4.5%;
+	 opacity: 0;
+	 visibility: hidden;
+	 font-size: 2vw;
+	 letter-spacing: 0.5px;
+}
+ .sidebar-navigation ul li .tooltip:before {
+	 content: "";
+	 display: block;
+	 position: absolute;
+	 left: -5%;
+	 top: 50%;
+	 transform: rotate(45deg);
+	 width: 15%;
+	 height: 15%;
+	 background-color: inherit;
+}
+ .sidebar-navigation ul li:hover {
+	 background-color: #22252e;
+}
+ .sidebar-navigation ul li:hover .tooltip {
+	 visibility: visible;
+	 opacity: 1;
+}
+ .sidebar-navigation ul li.active {
+	 background-color: #22252e;
+}
+ .sidebar-navigation ul li.active i {
+	 color: #98d7ec;
+}
+
+a{
+	text-decoration: none;
+	color: #fff !important;
+	vertical-align: middle;
+	cursor: pointer;
+}
+ 
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+* {
+	font-family: 'Open Sans', sans-serif;
+}
+
+.loginform,
+.registrationform,
+.edituserform {
+	background: #313443;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	max-width: 500px;
+	height: auto;
+	padding: 6px 10px 12px 10px;
+}
+
+.loginform .title,
+.registrationform .title,
+.edituserform .title {
+	font-size: 18px;
+	text-transform: uppercase;
+	text-align: center;
+	padding-top: 5px;
+	color: #fff;
+	margin-bottom: 10px;
+}
+
+
+.loginform i{
+    font-size: 2vw;
+    transition: all ease 450ms
+}
+
+.input-form {
+	margin-bottom: 7px;
+	position: relative;
+}
+
+.input-form .input {
+	width: 100%;
+	padding: 5px 0 5px 55px;
+	font-size: 16px;
+	border: transparent;
+	color: #f3efef;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	background: #000;
+	outline: none;
+}
+
+.input-form : before {
+	content: "";
+	position: absolute;
+	top: 5px;
+	left: 45px;
+	width: 2px;
+	height: 79%;
+	background: #000000;
+}
+
+.btnl {
+	width: 100%;
+	background: #000;
+	text-align: center;
+	padding: 2px 4vw 2px 4vw;
+	text-decoration: none;
+}
+
+.input-form .fas {
+	position: absolute;
+	top: 3px;
+	left: 14px;
+	font-size: 19px;
+	color: #fff;
+}
+
+::-webkit-input-placeholder {
+	/* Chrome/Opera/Safari */
+	color: #eeedef;
+}
+
+::-moz-placeholder {
+	/* Firefox 19+ */
+	color: #eeedef;
+}
+
+:-ms-input-placeholder {
+	/* IE 10+ */
+	color: #eeedef;
+}
+
+.selection {
+	background-color: #8ac858;
+	color: white;
+	padding: 12px;
+	width: 100%;
+	border: none;
+	font-size: 18px;
+	box-shadow: inset 0 0 5px #1d1933;
+	appearance: button;
+	outline: none;
+	text-indent: 2.2em;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	padding: 15px 0 15px 10px;
+}

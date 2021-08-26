@@ -13,6 +13,6 @@ public class LogOut implements Command {
     public Router execute(HttpServletRequest request) {
         HttpSession httpSession = request.getSession(true);
         httpSession.removeAttribute(Attribute.USERNAME);
-        return new Router(PagePath.TARIFF_LIST_JSP, Router.RouterType.REDIRECT);
+        return new Router(PagePath.LOGIN_JSP, Router.RouterType.REDIRECT);
     }
 }

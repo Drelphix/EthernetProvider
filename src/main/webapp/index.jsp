@@ -6,7 +6,7 @@
     <title>EthernetProviderX</title>
 </head>
 <body>
-<c:redirect url="/controller?command=tariff_list"/>
+<c:redirect url="/controller?command=welcome"/>
 </body>
 
 </html>

@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import static by.training.ethernetprovider.controller.command.Message.*;
 
-public class SignIn implements Command {
+public class SignInCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -33,7 +33,7 @@ public class SignIn implements Command {
                 case SUCCESS -> {
                     HttpSession httpSession = request.getSession(true);
                     httpSession.setAttribute(AttributeAndParameter.USERNAME, login);
-                    return new TariffList().execute(request);
+                    return new TariffListCommand().execute(request);
                 }
                 case USER_BLOCKED -> {
                     request.setAttribute(AttributeAndParameter.MESSAGE, USER_IS_BLOCKED);

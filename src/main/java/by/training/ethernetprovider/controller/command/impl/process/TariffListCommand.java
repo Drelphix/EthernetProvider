@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class TariffList implements Command {
+public class TariffListCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger();
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {

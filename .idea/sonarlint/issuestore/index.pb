@@ -4,14 +4,6 @@
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 }
 Msrc/test/java/by/training/ethernetprovider/connection/ConnectionPoolTest.java,9\e\9ecf8bc26b05d3e0ec5bd6eba832e9f1902d4c05
-K
-src/main/webapp/css/all.css,9\f\9fb0fd9b65e88372cbf9a8afdbd31a2b456b4046
-I
-src/main/webapp/js/all.js,d\2\d274343981f8d1c3dc931ca509b0969390352e36
-L
-src/main/webapp/css/sale.css,a\2\a24789c72d7fb192c816898cd00f1e73fc5e0be1
-M
-src/main/webapp/css/style.css,2\c\2c1f525046eaa5ad3e39cc3d3b2f4c4fab4ff318
 q
 Asrc/main/java/by/training/ethernetprovider/command/Attribute.java,5\f\5f70a41b6d354b9e12b14467efdcae8044a41789
 o

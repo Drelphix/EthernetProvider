@@ -2,7 +2,6 @@ package by.training.ethernetprovider.controller;
 
 import by.training.ethernetprovider.controller.command.AttributeAndParameter;
 import by.training.ethernetprovider.controller.command.CommandProvider;
-import by.training.ethernetprovider.controller.command.Message;
 import by.training.ethernetprovider.controller.command.PagePath;
 import by.training.ethernetprovider.exception.CommandException;
 import jakarta.servlet.RequestDispatcher;

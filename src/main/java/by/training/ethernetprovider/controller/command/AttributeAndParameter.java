@@ -1,6 +1,7 @@
 package by.training.ethernetprovider.controller.command;
 
 public final class AttributeAndParameter {
+    public static final String LOCALE = "locale";
     public static final String MESSAGE = "message";
     public static final String TARIFF = "tariff";
     public static final String TARIFFS = "tariffs";

@@ -4,7 +4,7 @@ import by.training.ethernetprovider.controller.command.AttributeAndParameter;
 import by.training.ethernetprovider.controller.command.Command;
 import by.training.ethernetprovider.controller.command.PagePath;
 import by.training.ethernetprovider.controller.command.Router;
-import by.training.ethernetprovider.controller.command.impl.redirect.ToSignIn;
+import by.training.ethernetprovider.controller.command.impl.redirect.ToSignInCommand;
 import by.training.ethernetprovider.exception.CommandException;
 import by.training.ethernetprovider.exception.ServiceException;
 import by.training.ethernetprovider.service.UserResultType;
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 import static by.training.ethernetprovider.controller.command.AttributeAndParameter.MESSAGE;
 import static by.training.ethernetprovider.controller.command.Message.*;
 
-public class SignUp implements Command {
+public class SignUpCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -52,7 +52,7 @@ public class SignUp implements Command {
                 case SUCCESS -> {
                     HttpSession httpSession = request.getSession(true);
                     httpSession.setAttribute(AttributeAndParameter.USERNAME, username);
-                    return new ToSignIn().execute(request);
+                    return new ToSignInCommand().execute(request);
                 }
             }
         } catch (ServiceException e){

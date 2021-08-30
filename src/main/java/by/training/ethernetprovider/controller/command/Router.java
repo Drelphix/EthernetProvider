@@ -1,4 +1,4 @@
-package by.training.ethernetprovider.command;
+package by.training.ethernetprovider.controller.command;
 
 public record Router(String path, RouterType routerType) {
 

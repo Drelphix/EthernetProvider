@@ -1,6 +1,6 @@
-package by.training.ethernetprovider.command;
+package by.training.ethernetprovider.controller.command;
 
-public final class Attribute {
+public final class AttributeAndParameter {
     public static final String MESSAGE = "message";
     public static final String TARIFF = "tariff";
     public static final String TARIFFS = "tariffs";
@@ -10,8 +10,8 @@ public final class Attribute {
     public static final String EMAIL = "email";
     public static final String ID = "id";
     public static final String COMMAND = "command";
-    public static final String REDIRECT = "redirect";
+    public static final String ERROR = "error";
 
-    private Attribute() {
+    private AttributeAndParameter() {
     }
 }

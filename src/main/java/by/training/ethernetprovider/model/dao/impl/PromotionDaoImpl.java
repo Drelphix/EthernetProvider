@@ -28,6 +28,9 @@ public class PromotionDaoImpl implements PromotionDao {
             "start_date = ?, end_date =? WHERE id_promotion = ?";
     private static final String DELETE_PROMOTION = "DELETE FROM promotions WHERE id_promotion = ?";
 
+    private PromotionDaoImpl() {
+    }
+
     public static PromotionDaoImpl getInstance() {
         return PromotionDaoHolder.instance;
     }

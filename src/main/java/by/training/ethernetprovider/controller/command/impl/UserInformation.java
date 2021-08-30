@@ -1,7 +1,7 @@
-package by.training.ethernetprovider.command.impl;
+package by.training.ethernetprovider.controller.command.impl;
 
-import by.training.ethernetprovider.command.Command;
-import by.training.ethernetprovider.command.Router;
+import by.training.ethernetprovider.controller.command.Command;
+import by.training.ethernetprovider.controller.command.Router;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class UserInformation implements Command {

@@ -8,8 +8,9 @@ pageEncoding="UTF-8"%>
 <body>
 <c:if test="${sessionScope.username != null}">
     <script type="text/javascript">
-    window.location.href = "/controller?command=tariff_list;
-
+        setTimeout(function Redirect(){
+        window.location="/controller?command=tariff_list";
+        }, 0);
     </script>
 </c:if>
 <center>

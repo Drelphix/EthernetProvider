@@ -1,8 +1,10 @@
 package by.training.ethernetprovider.controller;
 
-import by.training.ethernetprovider.command.Attribute;
-import by.training.ethernetprovider.command.CommandProvider;
-import by.training.ethernetprovider.command.PagePath;
+import by.training.ethernetprovider.controller.command.AttributeAndParameter;
+import by.training.ethernetprovider.controller.command.CommandProvider;
+import by.training.ethernetprovider.controller.command.Message;
+import by.training.ethernetprovider.controller.command.PagePath;
+import by.training.ethernetprovider.exception.CommandException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,25 +32,28 @@ public class Controller extends HttpServlet {
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        LOGGER.info("Starting process controller.");
-        String commandName = request.getParameter(Attribute.COMMAND);
-        LOGGER.info("Command name: " + commandName);
-        var command = COMMAND_PROVIDER.getCommand(commandName);
-        LOGGER.info("Command: " + command.toString());
-        var router = command.execute(request);
-        LOGGER.info("Execute router" + router.toString());
-        switch (router.routerType()) {
-            case FORWARD -> {
-                RequestDispatcher dispatcher = request.getRequestDispatcher(router.path());
-                dispatcher.forward(request, response);
+        try {
+            String commandName = request.getParameter(AttributeAndParameter.COMMAND);
+            var command = COMMAND_PROVIDER.getCommand(commandName);
+            var router = command.execute(request);
+            switch (router.routerType()) {
+                case FORWARD -> {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(router.path());
+                    dispatcher.forward(request, response);
+                }
+                case REDIRECT -> {
+                    response.sendRedirect(router.path());
+                }
+                default -> {
+                    LOGGER.error("Unknown router type: {}", router);
+                    response.sendRedirect(PagePath.ERROR_PAGE);
+                }
             }
-            case REDIRECT -> {
-                response.sendRedirect(router.path());
-            }
-            default -> {
-                LOGGER.error("Unknown router type: {}", router);
-                response.sendRedirect(PagePath.ERROR_PAGE_JSP);
-            }
+        } catch (CommandException e){
+            LOGGER.error("Can't process controller", e);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(PagePath.ERROR_PAGE);
+            request.setAttribute(AttributeAndParameter.ERROR, e);
+            dispatcher.forward(request, response);
         }
     }
 

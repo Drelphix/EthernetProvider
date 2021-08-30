@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserDao extends ProviderDao<User> {
 
-    boolean signUpUser(String username, String password, String email) throws DaoException;
+    boolean save(String username, String password, String email) throws DaoException;
 
     Optional<User> findUserByUsername(String username) throws DaoException;
 

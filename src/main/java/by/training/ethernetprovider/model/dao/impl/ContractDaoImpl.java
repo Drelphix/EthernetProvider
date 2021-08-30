@@ -19,16 +19,23 @@ import static by.training.ethernetprovider.model.dao.impl.ColumnName.*;
 
 public class ContractDaoImpl implements ContractDao {
     private static final Logger LOGGER = LogManager.getLogger();
-    private ConnectionPool connectionPool = ConnectionPool.getInstance();
-    private static final String SELECT_CONTRACT_BY_ID = "SELECT id_contract, start_date, end_date, " +
-            "is_active, id_tariff, id_user FROM contracts WHERE id=?";
-    private static final String SELECT_ALL_CONTRACTS = "SELECT id_contract, start_date, end_date, " +
-            "is_active, id_tariff, id_user FROM contracts";
-    private static final String UPDATE_CONTRACT_BY_CONTRACT = "UPDATE contracts SET start_date = ?, end_date = ?, " +
-            "is_active = ?, id_tariff = ?, id_user = ? WHERE id = ?";
+    private static final String SELECT_CONTRACT_BY_ID = """
+            SELECT id_contract, start_date, end_date, is_active, id_tariff, id_user 
+            FROM contracts WHERE id=?""";
+    private static final String SELECT_ALL_CONTRACTS = """
+            SELECT id_contract, start_date, end_date, is_active, id_tariff, id_user 
+            FROM contracts""";
+    private static final String UPDATE_CONTRACT_BY_CONTRACT = """
+            UPDATE contracts SET start_date = ?, end_date = ?, is_active = ?, id_tariff = ?, id_user = ? 
+            WHERE id = ?""";
+    private static final String INSERT_NEW_CONTRACT = """
+            INSERT INTO contracts (start_date, end_date, is_active, id_tariff, id_user) 
+            values (?, ?, ?, ?, ?)""";
     private static final String DELETE_CONTRACT_BY_ID = "DELETE FROM contracts WHERE id_contract = ?";
-    private static final String INSERT_NEW_CONTRACT = "INSERT INTO contracts (start_date, end_date, " +
-            "is_active, id_tariff, id_user) values (?, ?, ?, ?, ?)";
+    private final ConnectionPool connectionPool = ConnectionPool.getInstance();
+
+    private ContractDaoImpl() {
+    }
 
     public static ContractDaoImpl getInstance() {
         return ContractDaoHolder.instance;
@@ -36,7 +43,7 @@ public class ContractDaoImpl implements ContractDao {
 
     @Override
     public void save(Contract contract) throws DaoException {
-        try(PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_CONTRACT)){
+        try (PreparedStatement statement = connectionPool.getConnection().prepareStatement(INSERT_NEW_CONTRACT)) {
             setContract(statement, contract.getStartDate(), contract.getEndDate(),
                     contract.isActive(),
                     contract.getTariff().getId(), contract.getUser().getId());

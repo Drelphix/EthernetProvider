@@ -1,4 +1,4 @@
-package by.training.ethernetprovider.command;
+package by.training.ethernetprovider.controller.command;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,10 +13,16 @@ public class CommandProvider {
     public Command getCommand(String commandName) {
         CommandType commandType;
         if (commandName == null || commandName.isEmpty()) {
-            commandType = CommandType.DEFAULT;
             LOGGER.error("Can't find commandName: {}", commandName);
+            commandType = CommandType.DEFAULT;
         } else {
-            commandType = CommandType.valueOf(commandName.toUpperCase());
+            try {
+                commandType = CommandType.valueOf(commandName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                LOGGER.error("Can't find command: {}", commandName, e);
+                commandType = CommandType.DEFAULT;
+            }
+
         }
         return commandType.getCommand();
     }

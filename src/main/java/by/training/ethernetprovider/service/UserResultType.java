@@ -1,0 +1,14 @@
+package by.training.ethernetprovider.service;
+
+public enum UserResultType {
+    SUCCESS,
+    INCORRECT_CREDENTIALS,
+    ERROR,
+    INCORRECT_USERNAME,
+    INCORRECT_PASSWORD,
+    INCORRECT_EMAIL,
+    USER_BLOCKED,
+    USER_NOT_CONFIRMED,
+    USERNAME_ALREADY_REGISTERED,
+    EMAIL_ALREADY_REGISTERED
+}

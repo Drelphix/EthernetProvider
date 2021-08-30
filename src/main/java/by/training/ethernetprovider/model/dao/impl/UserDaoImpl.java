@@ -23,41 +23,62 @@ import static by.training.ethernetprovider.model.dao.impl.ColumnName.*;
 public class UserDaoImpl implements UserDao {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
-    private static final String SELECT_USER_BY_ID = "SELECT id_user, name, surname, city, address, login, email, " +
-            "balance, roles.role, statuses.status FROM provider.users " +
-            "RIGHT JOIN roles ON users.id_role = roles.id_role " +
-            "JOIN statuses ON users.id_status = statuses.id_status WHERE id_user = ?";
-    private static final String SELECT_ALL_USERS = "SELECT id_user, name, surname, city, address, login, email, " +
-            "balance, roles.role, statuses.status FROM provider.users " +
-            "RIGHT JOIN roles ON users.id_role = roles.id_role " +
-            "JOIN statuses ON users.id_status = statuses.id_status;";
-    private static final String INSERT_NEW_USER = "INSERT INTO users (name, surname, city, address, login, " +
-            "email, id_role, id_status,  balance, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SELECT_USER_BY_ID = """
+            SELECT id_user, name, surname, city, address, login, email, balance, roles.role, statuses.status 
+            FROM provider.users 
+            RIGHT JOIN roles ON users.id_role = roles.id_role 
+            JOIN statuses ON users.id_status = statuses.id_status WHERE id_user = ?""";
+    private static final String SELECT_ALL_USERS = """
+            SELECT id_user, name, surname, city, address, login, email, balance, roles.role, statuses.status 
+            FROM provider.users 
+            RIGHT JOIN roles ON users.id_role = roles.id_role 
+            JOIN statuses ON users.id_status = statuses.id_status;""";
+    private static final String INSERT_NEW_USER = """
+            INSERT INTO users (name, surname, city, address, login, email, id_role, id_status,  balance, id_user) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
     private static final String SELECT_ID_ROLE_BY_NAME = "SELECT id_role FROM roles WHERE role = ?";
     private static final String SELECT_ID_STATUS_BY_NAME = "SELECT id_status FROM statuses WHERE status = ?";
     private static final String UPDATE_USER_BY_USER = "UPDATE users SET name = ?, surname = ?, city = ?, address = ?," +
             "login = ?, email = ?, id_role = ?, id_status = ? WHERE id_user = ?";
     private static final String UPDATE_PASSWORD_BY_USERNAME = "UPDATE users SET password = ? WHERE login = ?";
-    private static final String SELECT_USER_BY_LOGIN = "SELECT id_user, name, surname, city, address, login, email, " +
-            "balance, roles.role, statuses.status FROM provider.users "+
-            "RIGHT JOIN roles ON users.id_role = roles.id_role "+
-            "JOIN statuses ON users.id_status = statuses.id_status WHERE users.login = ?";
-    private static final String SELECT_USER_BY_EMAIL = "SELECT id_user, name, surname, city, address, login, email, " +
-            "balance, roles.role, statuses.status FROM provider.users "+
-            "RIGHT JOIN roles ON users.id_role = roles.id_role "+
-            "JOIN statuses ON users.id_status = statuses.id_status WHERE users.email = ?";
+    private static final String SELECT_USER_BY_LOGIN = """
+            SELECT id_user, name, surname, city, address, login, email, balance, roles.role, statuses.status 
+            FROM provider.users 
+            RIGHT JOIN roles ON users.id_role = roles.id_role 
+            JOIN statuses ON users.id_status = statuses.id_status WHERE users.login = ?""";
+    private static final String SELECT_USER_BY_EMAIL = """
+            SELECT id_user, name, surname, city, address, login, email, balance, roles.role, statuses.status 
+            FROM provider.users 
+            RIGHT JOIN roles ON users.id_role = roles.id_role 
+            JOIN statuses ON users.id_status = statuses.id_status WHERE users.email = ?""";
     private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id_user = ?";
-    private static final String INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL = "INSERT INTO users (login, password, email, balance, id_role, id_status) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL = "INSERT INTO users " +
+            "(login, password, email, balance, id_role, id_status) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_USER_STATUS_BY_EMAIL = "UPDATE users SET id_status = ? WHERE email = ?";
     private static final String SELECT_PASSWORD_BY_PARAMETER = "SELECT password FROM users WHERE login = ? OR email = ?";
 
-
-    private static class UserDaoHolder{
-        private static final UserDaoImpl instance = new UserDaoImpl();
+    private UserDaoImpl() {
     }
 
-    public static UserDaoImpl getInstance(){
+    public static UserDaoImpl getInstance() {
         return UserDaoHolder.instance;
+    }
+
+    @Override
+    public boolean save(String username, String password, String email) throws DaoException {
+        try (Connection connection = connectionPool.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL)) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.setString(3, email);
+            statement.setBigDecimal(4, BigDecimal.ZERO);
+            statement.setInt(5, getRoleIdByName(Role.USER.name()));
+            statement.setInt(6, getStatusIdByName(Status.INACTIVE.name()));
+            return statement.executeUpdate() != 0;
+        } catch (SQLException e) {
+            LOGGER.error("Can't register user: {}", username, e);
+            throw new DaoException("Can't register user: "+ username, e);
+        }
     }
 
     @Override
@@ -134,21 +155,8 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    @Override
-    public boolean signUpUser(String username, String password, String email) throws DaoException {
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT_NEW_USER_BY_NAME_PASSWORD_EMAIL)) {
-            statement.setString(1, username);
-            statement.setString(2, password);
-            statement.setString(3, email);
-            statement.setBigDecimal(4, BigDecimal.ZERO);
-            statement.setInt(5, getRoleIdByName(Role.USER.name()));
-            statement.setInt(6, getStatusIdByName(Status.INACTIVE.name()));
-            return statement.executeUpdate() != 0;
-        } catch (SQLException e) {
-            LOGGER.error("Can't register user: {}", username, e);
-            throw new DaoException("Can't register user: "+ username, e);
-        }
+    private static class UserDaoHolder {
+        private static final UserDaoImpl instance = new UserDaoImpl();
     }
 
     @Override

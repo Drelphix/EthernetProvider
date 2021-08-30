@@ -36,12 +36,15 @@ public class TariffDaoImpl implements TariffDao {
     private static final String DELETE_TARIFF_BY_ID = "DELETE FROM tariffs where id_tariff = ?";
     private final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
-    private static class TariffDaoHolder{
-        private static final TariffDaoImpl instance = new TariffDaoImpl();
+    private TariffDaoImpl() {
     }
 
-    public static TariffDaoImpl getInstance(){
+    public static TariffDaoImpl getInstance() {
         return TariffDaoHolder.instance;
+    }
+
+    private static class TariffDaoHolder {
+        private static final TariffDaoImpl instance = new TariffDaoImpl();
     }
 
     @Override

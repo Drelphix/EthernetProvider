@@ -33,7 +33,7 @@ public class SignInCommand implements Command {
                 case SUCCESS -> {
                     HttpSession httpSession = request.getSession(true);
                     httpSession.setAttribute(AttributeAndParameter.USERNAME, login);
-                    return new TariffListCommand().execute(request);
+                    return new ToTariffsCommand().execute(request);
                 }
                 case USER_BLOCKED -> {
                     request.setAttribute(AttributeAndParameter.MESSAGE, USER_IS_BLOCKED);

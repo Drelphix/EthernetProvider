@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public class ToTariffConnectCommand implements Command {
+public class ToTariffCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override

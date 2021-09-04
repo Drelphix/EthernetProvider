@@ -8,6 +8,7 @@ public class Tariff extends ProviderEntity{
     private BigDecimal price;
     private boolean isArchive;
     private Promotion promotion;
+    private BigDecimal discountPrice;
 
     public Tariff(int id){
         super(id);
@@ -61,6 +62,14 @@ public class Tariff extends ProviderEntity{
         this.promotion = promotion;
     }
 
+    public BigDecimal getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public void setDiscountPrice(BigDecimal discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,31 +79,36 @@ public class Tariff extends ProviderEntity{
         Tariff tariff = (Tariff) o;
 
         if (isArchive() != tariff.isArchive()) return false;
-        if (!getName().equals(tariff.getName())) return false;
-        if (!getDescription().equals(tariff.getDescription())) return false;
-        if (!getPrice().equals(tariff.getPrice())) return false;
-        return getPromotion().equals(tariff.getPromotion());
+        if (getName() != null ? !getName().equals(tariff.getName()) : tariff.getName() != null) return false;
+        if (getDescription() != null ? !getDescription().equals(tariff.getDescription()) : tariff.getDescription() != null)
+            return false;
+        if (getPrice() != null ? !getPrice().equals(tariff.getPrice()) : tariff.getPrice() != null) return false;
+        if (getPromotion() != null ? !getPromotion().equals(tariff.getPromotion()) : tariff.getPromotion() != null)
+            return false;
+        return getDiscountPrice() != null ? getDiscountPrice().equals(tariff.getDiscountPrice()) : tariff.getDiscountPrice() == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + getName().hashCode();
-        result = 31 * result + getDescription().hashCode();
-        result = 31 * result + getPrice().hashCode();
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
+        result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
         result = 31 * result + (isArchive() ? 1 : 0);
-        result = 31 * result + getPromotion().hashCode();
+        result = 31 * result + (getPromotion() != null ? getPromotion().hashCode() : 0);
+        result = 31 * result + (getDiscountPrice() != null ? getDiscountPrice().hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Tariff{ " + super.toString()+
-                ", name = '" + name + '\'' +
-                ", description = '" + description + '\'' +
-                ", price = " + price +
-                ", isArchive = " + isArchive +
-                ", promotion = " + promotion +
+        return "Tariff{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", isArchive=" + isArchive +
+                ", promotion=" + promotion +
+                ", discountPrice=" + discountPrice +
                 '}';
     }
 }

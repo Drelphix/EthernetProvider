@@ -1,6 +1,6 @@
 package by.training.ethernetprovider.validator;
 
-public class CredentialValidator { //TODO 30.08.2021 13:31 :
+public class CredentialValidator { //TODO 04.09.2021 12:37 :
 
     private CredentialValidator() {
     }

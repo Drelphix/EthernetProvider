@@ -12,9 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-public class TariffListCommand implements Command {
+public class ToTariffsCommand implements Command {
     private static final Logger LOGGER = LogManager.getLogger();
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
@@ -22,6 +23,11 @@ public class TariffListCommand implements Command {
         List<Tariff> tariffs = null;
         try {
             tariffs = tariffService.findAllNotArchive();
+            for(Tariff tariff: tariffs) {
+                tariffService.setPromotion(tariff);
+                BigDecimal discountPrice = tariffService.calculateActualPrice(tariff);
+                tariff.setDiscountPrice(discountPrice);
+            }
         } catch (ServiceException e) {
             LOGGER.error("Can't execute tariff list", e);
             throw new CommandException("Can't execute tariff list", e);

@@ -1,4 +1,4 @@
 # Project exclude paths
-/target/
-/.idea/
-/src/main/resources/properties/mail.properties
+target/
+.idea/
+src/main/resources/properties/mail.properties

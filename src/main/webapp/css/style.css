@@ -7,7 +7,8 @@
 }
  body {
 	 overflow: hidden;
-	 background: white;
+	 background: url(/images/main-background.jpg)  no-repeat center center;
+	 background-size:100%;
 }
  .sidebar-navigation {
 	 display: inline-block;
@@ -229,4 +230,12 @@ a{
   text-align: center;
   font-size: 20;
   font-weight: 100;
+
+}
+.provider{
+color:white;
+text-shadow: black 0 0 2px;
+}
+.fas{
+padding-bottom:10px;
 }

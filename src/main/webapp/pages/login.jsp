@@ -10,6 +10,7 @@ pageEncoding="UTF-8"%>
 <fmt:message key="login.title" bundle="${language}" var="title"/>
 <fmt:message key="form.button.signUp" bundle="${language}" var="buttonSignUp"/>
 <fmt:message key="form.button.signIn" bundle="${language}" var="buttonSignIn"/>
+<fmt:message key="form.button.back" bundle="${language}" var="buttonBack"/>
 <fmt:message key="form.button.forgot" bundle="${language}" var="buttonForgot"/>
 <fmt:message key="form.button.getPassword" bundle="${language}" var="buttonGetPassword"/>
 
@@ -29,10 +30,10 @@ pageEncoding="UTF-8"%>
     </c:if>
     <div class="logo"></div>
 
-    <form id="sign-up" action="${pageContext.request.contextPath}/controller" method="post" >
+    <form id="sign-up" action="${pageContext.request.contextPath}/controller" method="post" hidden>
         <input type="hidden" value="to_sign_up" name="command">
     </form>
-    <form id="forgot" action="${pageContext.request.contextPath}/controller" method="post" >
+    <form id="forgot" action="${pageContext.request.contextPath}/controller" method="post" hidden >
         <input type="hidden" value="to_forgot_pass" name="command">
     </form>
 
@@ -41,12 +42,13 @@ pageEncoding="UTF-8"%>
         <input type="text" name="username" placeholder=${formUsername} value="${username}">
         <input type="password" name="password" placeholder=${formPassword} value="${password}">
         <a href="#" onclick="document.getElementById('login-form').submit()" class="login-btn">${buttonSignIn}</a>
-
     </form>
 
     <div class="other-options">
+        <center>
         <div class="option"><a class="option-text" onclick="document.getElementById('sign-up').submit()" >${buttonSignUp}</a></div>
         <div class="option"><a class="option-text" onclick="document.getElementById('forgot').submit()"> ${buttonForgot}</a></div>
+        </center>
     </div>
 
 </div>

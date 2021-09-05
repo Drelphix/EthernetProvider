@@ -4,9 +4,11 @@ import by.training.ethernetprovider.controller.command.AttributeAndParameter;
 import by.training.ethernetprovider.controller.command.Command;
 import by.training.ethernetprovider.controller.command.PagePath;
 import by.training.ethernetprovider.controller.command.Router;
+import by.training.ethernetprovider.controller.command.impl.redirect.ToTariffsCommand;
 import by.training.ethernetprovider.exception.CommandException;
 import by.training.ethernetprovider.exception.ServiceException;
 import by.training.ethernetprovider.service.UserResultType;
+import by.training.ethernetprovider.service.UserService;
 import by.training.ethernetprovider.service.impl.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -32,6 +34,8 @@ public class SignInCommand implements Command {
                 }
                 case SUCCESS -> {
                     HttpSession httpSession = request.getSession(true);
+                    String role = userService.findRoleByUsername(login).getValue();
+                    httpSession.setAttribute(AttributeAndParameter.ROLE, role);
                     httpSession.setAttribute(AttributeAndParameter.USERNAME, login);
                     return new ToTariffsCommand().execute(request);
                 }

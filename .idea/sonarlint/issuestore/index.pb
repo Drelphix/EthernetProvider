@@ -19,8 +19,6 @@ q
 Asrc/main/java/by/training/ethernetprovider/model/entity/User.java,b\7\b7516d4702138a4447476abdda994fadca603144
 O
 src/main/webapp/WEB-INF/web.xml,2\e\2e22b6edd746fa3dc40ad7276c87c8d87d72a392
-I
-src/main/webapp/index.jsp,8\e\8e6d3b70c9f5b02570779b0441540d45eceb0ded
 u
 Esrc/main/java/by/training/ethernetprovider/model/entity/Contract.java,5\a\5a3d1dca84f96e132b65e13942ca59bf10e1e1ed
 v
@@ -29,3 +27,5 @@ s
 Csrc/main/java/by/training/ethernetprovider/model/entity/Status.java,0\4\04dd3c2b4489ae6826e3f309ac7132af28609cfa
 u
 Esrc/main/java/by/training/ethernetprovider/controller/Controller.java,e\e\ee6da21029cc666f4a86d8c25cc8a294cd2c3f4a
+}
+Msrc/main/java/by/training/ethernetprovider/validator/CredentialValidator.java,5\5\55e3eab8259359cf52cdc6e63c6aeadbab2321de

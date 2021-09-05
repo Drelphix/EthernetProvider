@@ -1,4 +1,4 @@
-package by.training.ethernetprovider.controller.command.impl.process;
+package by.training.ethernetprovider.controller.command.impl.redirect;
 
 import by.training.ethernetprovider.controller.command.AttributeAndParameter;
 import by.training.ethernetprovider.controller.command.Command;

@@ -4,6 +4,7 @@ import by.training.ethernetprovider.exception.DaoException;
 import by.training.ethernetprovider.exception.ServiceException;
 import by.training.ethernetprovider.model.dao.UserDao;
 import by.training.ethernetprovider.model.dao.impl.UserDaoImpl;
+import by.training.ethernetprovider.model.entity.Role;
 import by.training.ethernetprovider.model.entity.User;
 import by.training.ethernetprovider.service.UserResultType;
 import by.training.ethernetprovider.service.UserService;
@@ -78,5 +79,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deactivateUser(String username) {
         return false;
+    }
+
+    @Override
+    public Role findRoleByUsername(String username) throws ServiceException {
+        Role role = Role.USER;
+        try {
+            Optional<Role> roleOptional = userDao.findRoleByUsername(username);
+            if(roleOptional.isPresent()){
+                return roleOptional.get();
+            }
+        } catch (DaoException e) {
+            LOGGER.error("Can't find role by username", e);
+            throw new ServiceException("Can't find role by username", e);
+        }
+        return role;
     }
 }

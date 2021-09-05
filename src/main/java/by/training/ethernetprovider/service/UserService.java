@@ -1,6 +1,7 @@
 package by.training.ethernetprovider.service;
 
 import by.training.ethernetprovider.exception.ServiceException;
+import by.training.ethernetprovider.model.entity.Role;
 
 public interface UserService {
 
@@ -11,4 +12,6 @@ public interface UserService {
     boolean activate(String identifier);
 
     boolean deactivateUser(String username);
+
+    Role findRoleByUsername(String username) throws ServiceException;
 }

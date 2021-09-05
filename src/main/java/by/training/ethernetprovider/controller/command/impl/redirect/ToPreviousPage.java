@@ -1,19 +1,19 @@
 package by.training.ethernetprovider.controller.command.impl.redirect;
 
-import by.training.ethernetprovider.controller.command.AttributeAndParameter;
 import by.training.ethernetprovider.controller.command.Command;
-import by.training.ethernetprovider.controller.command.PagePath;
 import by.training.ethernetprovider.controller.command.Router;
+import by.training.ethernetprovider.controller.command.impl.process.WelcomeCommand;
 import by.training.ethernetprovider.exception.CommandException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
+public class ToPreviousPage implements Command {
 
-public class LogOutCommand implements Command {
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        var httpSession = request.getSession(true);
-        httpSession.removeAttribute(AttributeAndParameter.USERNAME);
-        return new ToPreviousPage().execute(request);
+        String path = request.getHeader("Referer");
+        if(path.isEmpty()){
+            return new WelcomeCommand().execute(request);
+        }
+        return new Router(path, Router.RouterType.REDIRECT);
     }
 }

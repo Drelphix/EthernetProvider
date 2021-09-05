@@ -56,6 +56,10 @@ public class UserDaoImpl implements UserDao {
             "(login, password, email, balance, id_role, id_status) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_USER_STATUS_BY_EMAIL = "UPDATE users SET id_status = ? WHERE email = ?";
     private static final String SELECT_PASSWORD_BY_PARAMETER = "SELECT password FROM users WHERE login = ? OR email = ?";
+    private static final String SELECT_ROLE_BY_USERNAME = """
+            SELECT roles.role  FROM provider.users
+            RIGHT JOIN roles ON users.id_role = roles.id_role
+            WHERE name=?""";
 
     private UserDaoImpl() {
     }
@@ -219,6 +223,23 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<Role> findRoleByUsername(String username) throws DaoException {
+        Role role = null;
+        try(Connection connection = connectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_ROLE_BY_USERNAME))   {
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
+            if(result.next()){
+                role = Role.valueOf(result.getString(ROLE_ROLE));
+            }
+        }catch (SQLException e){
+            LOGGER.error("Can't find role by username", e);
+            throw new DaoException("Can't find role by username", e);
+        }
+        return Optional.ofNullable(role);
+    }
+
+    @Override
     public String findPasswordByUsernameOrEmail(String parameter) throws DaoException {
         String password = "";
         try (Connection connection = connectionPool.getConnection();
@@ -230,7 +251,8 @@ public class UserDaoImpl implements UserDao {
                 password = result.getString("password");
             }
         } catch (SQLException e) {
-            LOGGER.error("Can't find user by name/email: {}", parameter, e);
+            LOGGER.error("Can't find user by name/email", e);
+            throw new DaoException("Can't find user by name/email", e);
         }
         return password;
     }

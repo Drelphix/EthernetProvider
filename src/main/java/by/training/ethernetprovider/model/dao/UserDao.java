@@ -1,6 +1,7 @@
 package by.training.ethernetprovider.model.dao;
 
 import by.training.ethernetprovider.exception.DaoException;
+import by.training.ethernetprovider.model.entity.Role;
 import by.training.ethernetprovider.model.entity.Status;
 import by.training.ethernetprovider.model.entity.User;
 
@@ -19,6 +20,8 @@ public interface UserDao extends ProviderDao<User> {
     boolean updatePasswordByUsername(String username, String password) throws DaoException;
 
     boolean updateStatusByEmail(String email, Status status) throws DaoException;
+
+    Optional<Role> findRoleByUsername(String username) throws DaoException;
 
 
 }

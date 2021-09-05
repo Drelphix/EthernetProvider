@@ -4,14 +4,12 @@ pageEncoding="UTF-8"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="localization.message" var="language"/>
-<fmt:message key="login.form.username.placeholder" bundle="${language}" var="formUsername"/>
-<fmt:message key="login.form.password.placeholder" bundle="${language}" var="formPassword"/>
-<fmt:message key="login.form.email.placeholder" bundle="${language}" var="formEmail"/>
-<fmt:message key="login.title" bundle="${language}" var="title"/>
-<fmt:message key="login.form.button.signUp" bundle="${language}" var="buttonSignUp"/>
-<fmt:message key="login.form.button.signIn" bundle="${language}" var="buttonSignIn"/>
-<fmt:message key="login.form.button.forgot" bundle="${language}" var="buttonForgot"/>
-<fmt:message key="login.form.button.getPassword" bundle="${language}" var="buttonGetPassword"/>
+<fmt:message key="form.email.placeholder" bundle="${language}" var="formEmail"/>
+<fmt:message key="forgot.title" bundle="${language}" var="title"/>
+<fmt:message key="form.button.signIn" bundle="${language}" var="buttonSignIn"/>
+<fmt:message key="form.button.forgot" bundle="${language}" var="buttonForgot"/>
+<fmt:message key="form.button.getPassword" bundle="${language}" var="buttonGetPassword"/>
+
 
 <html>
 <head>

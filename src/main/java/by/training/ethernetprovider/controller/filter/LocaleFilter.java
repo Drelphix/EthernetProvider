@@ -1,12 +1,12 @@
 package by.training.ethernetprovider.controller.filter;
 
-import by.training.ethernetprovider.controller.LocaleHolder;
 import by.training.ethernetprovider.controller.command.AttributeAndParameter;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @WebFilter(urlPatterns = "/pages/*", dispatcherTypes = {DispatcherType.FORWARD,
                                                         DispatcherType.INCLUDE,
@@ -21,7 +21,7 @@ public class LocaleFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         if(request.getSession(false) != null && request.getSession(false).getAttribute(AttributeAndParameter.LOCALE) == null){
-            request.getSession().setAttribute(AttributeAndParameter.LOCALE, LocaleHolder.DEFAULT);
+            request.getSession().setAttribute(AttributeAndParameter.LOCALE, Locale.ENGLISH);
         }
         filterChain.doFilter(request,servletResponse);
     }

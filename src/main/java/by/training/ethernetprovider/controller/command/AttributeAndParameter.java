@@ -14,6 +14,7 @@ public final class AttributeAndParameter {
     public static final String ID = "id";
     public static final String COMMAND = "command";
     public static final String ERROR = "error";
+    public static final String ROLE = "role";
 
     private AttributeAndParameter() {
     }

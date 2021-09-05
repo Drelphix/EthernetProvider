@@ -9,6 +9,7 @@ pageEncoding="UTF-8"%>
 <fmt:message key="form.email.placeholder" bundle="${language}" var="formEmail"/>
 <fmt:message key="registration.title" bundle="${language}" var="title"/>
 <fmt:message key="form.button.signUp" bundle="${language}" var="buttonSignUp"/>
+<fmt:message key="form.button.back" bundle="${language}" var="buttonBack"/>
 <fmt:message key="form.button.signIn" bundle="${language}" var="buttonSignIn"/>
 <fmt:message key="form.button.getPassword" bundle="${language}" var="buttonGetPassword"/>
 
@@ -26,8 +27,6 @@ pageEncoding="UTF-8"%>
   <c:if test="${message != null}">
     <center><span style="color: rgba(255,255,255,.5)">${message}</span></center>
   </c:if>
-  <div class="logo"></div>
-
   <form id="sign-in" action="${pageContext.request.contextPath}/controller" method="post" >
     <input type="hidden" value="to_sign_in" name="command">
   </form>
@@ -39,7 +38,13 @@ pageEncoding="UTF-8"%>
     <input type="password" name="pass" placeholder=${formPassword} value="${password}">
     <input type="password" name="repass" placeholder="Repeat password" value="${repeatPassword}">
     <a href="#" onclick="document.getElementById('registration-form').submit()" class="login-btn" id="signup-btn">${buttonSignUp}</a>
-    <a href="#" onclick="document.getElementById('sign-in').submit()" class="login-btn" id="back-btn">${buttonSignIn}</a>
   </form>
+
+  <div class="other-options">
+    <center>
+      <div class="option"><a class="option-text" onclick="document.getElementById('sign-in').submit()" >${buttonSignIn}</a></div>
+      <div class="option"><a class="option-text" onclick="history.back()"> ${buttonBack}</a></div>
+    </center>
+  </div>
 
 </div>

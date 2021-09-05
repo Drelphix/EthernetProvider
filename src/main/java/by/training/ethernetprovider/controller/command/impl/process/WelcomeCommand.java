@@ -2,6 +2,7 @@ package by.training.ethernetprovider.controller.command.impl.process;
 
 import by.training.ethernetprovider.controller.command.Command;
 import by.training.ethernetprovider.controller.command.Router;
+import by.training.ethernetprovider.controller.command.impl.redirect.ToTariffsCommand;
 import by.training.ethernetprovider.exception.CommandException;
 import jakarta.servlet.http.HttpServletRequest;
 
